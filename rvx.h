@@ -921,7 +921,7 @@ static inline uint8_t rvx_spi_clock_get_divider(RvxSpiManager *spi_address)
 static inline void rvx_spi_write(RvxSpiManager *spi_address, const uint8_t wdata)
 {
   spi_address->RVX_SPI_WRITE = wdata;
-  while (!(spi_address->RVX_SPI_STATUS & 1))
+  while (spi_address->RVX_SPI_STATUS & 1)
     ;
 }
 
@@ -938,7 +938,7 @@ static inline void rvx_spi_write(RvxSpiManager *spi_address, const uint8_t wdata
 static inline uint8_t rvx_spi_transfer(RvxSpiManager *spi_address, const uint8_t wdata)
 {
   spi_address->RVX_SPI_WRITE = wdata;
-  while (!(spi_address->RVX_SPI_STATUS & 1))
+  while (spi_address->RVX_SPI_STATUS & 1)
     ;
   return spi_address->RVX_SPI_READ;
 }
