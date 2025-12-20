@@ -112,40 +112,40 @@
 typedef enum RvxTrapCauseCode
 {
   // Exception codes
-  RVX_EXCEPTION_INSTRUCTION_ADDRESS_MISALIGNED = 0U, ///< Cause: Instruction address misaligned.
-  RVX_EXCEPTION_INSTRUCTION_ACCESS_FAULT = 1U,       ///< Cause: Instruction access fault.
-  RVX_EXCEPTION_ILLEGAL_INSTRUCTION = 2U,            ///< Cause: Illegal instruction.
-  RVX_EXCEPTION_BREAKPOINT = 3U,                     ///< Cause: Breakpoint exception.
-  RVX_EXCEPTION_LOAD_ADDRESS_MISALIGNED = 4U,        ///< Cause: Load address misaligned.
-  RVX_EXCEPTION_LOAD_ACCESS_FAULT = 5U,              ///< Cause: Load access fault.
-  RVX_EXCEPTION_STORE_AMO_ADDRESS_MISALIGNED = 6U,   ///< Cause: Store/AMO address misaligned.
-  RVX_EXCEPTION_STORE_AMO_ACCESS_FAULT = 7U,         ///< Cause: Store/AMO access fault.
-  RVX_EXCEPTION_ENVIRONMENT_CALL_FROM_U_MODE = 8U,   ///< Cause: Environment call from U-mode.
-  RVX_EXCEPTION_ENVIRONMENT_CALL_FROM_S_MODE = 9U,   ///< Cause: Environment call from S-mode.
-  RVX_EXCEPTION_ENVIRONMENT_CALL_FROM_M_MODE = 11U,  ///< Cause: Environment call from M-mode.
-  RVX_EXCEPTION_INSTRUCTION_PAGE_FAULT = 12U,        ///< Cause: Instruction page fault.
-  RVX_EXCEPTION_LOAD_PAGE_FAULT = 13U,               ///< Cause: Load page fault.
-  RVX_EXCEPTION_STORE_AMO_PAGE_FAULT = 15U,          ///< Cause: Store/AMO page fault.
+  RVX_TRAP_CAUSE_INSTRUCTION_ADDRESS_MISALIGNED = 0U, ///< Trap cause: Instruction address misaligned.
+  RVX_TRAP_CAUSE_INSTRUCTION_ACCESS_FAULT = 1U,       ///< Trap cause: Instruction access fault.
+  RVX_TRAP_CAUSE_ILLEGAL_INSTRUCTION = 2U,            ///< Trap cause: Illegal instruction.
+  RVX_TRAP_CAUSE_BREAKPOINT = 3U,                     ///< Trap cause: Breakpoint exception.
+  RVX_TRAP_CAUSE_LOAD_ADDRESS_MISALIGNED = 4U,        ///< Trap cause: Load address misaligned.
+  RVX_TRAP_CAUSE_LOAD_ACCESS_FAULT = 5U,              ///< Trap cause: Load access fault.
+  RVX_TRAP_CAUSE_STORE_AMO_ADDRESS_MISALIGNED = 6U,   ///< Trap cause: Store/AMO address misaligned.
+  RVX_TRAP_CAUSE_STORE_AMO_ACCESS_FAULT = 7U,         ///< Trap cause: Store/AMO access fault.
+  RVX_TRAP_CAUSE_ENVIRONMENT_CALL_FROM_U_MODE = 8U,   ///< Trap cause: Environment call from U-mode.
+  RVX_TRAP_CAUSE_ENVIRONMENT_CALL_FROM_S_MODE = 9U,   ///< Trap cause: Environment call from S-mode.
+  RVX_TRAP_CAUSE_ENVIRONMENT_CALL_FROM_M_MODE = 11U,  ///< Trap cause: Environment call from M-mode.
+  RVX_TRAP_CAUSE_INSTRUCTION_PAGE_FAULT = 12U,        ///< Trap cause: Instruction page fault.
+  RVX_TRAP_CAUSE_LOAD_PAGE_FAULT = 13U,               ///< Trap cause: Load page fault.
+  RVX_TRAP_CAUSE_STORE_AMO_PAGE_FAULT = 15U,          ///< Trap cause: Store/AMO page fault.
 
   // Interrupt codes (MSB set)
-  RVX_IRQ_MSI = (int)((1U << 31) | 3U),      ///< Cause: M-mode Software Interrupt (MSI).
-  RVX_IRQ_MTI = (int)((1U << 31) | 11U),     ///< Cause: M-mode External Interrupt (MEI).
-  RVX_IRQ_FAST_0 = (int)((1U << 31) | 16U),  ///< Cause: Fast-Interrupt 0
-  RVX_IRQ_FAST_1 = (int)((1U << 31) | 17U),  ///< Cause: Fast-Interrupt 1
-  RVX_IRQ_FAST_2 = (int)((1U << 31) | 18U),  ///< Cause: Fast-Interrupt 2
-  RVX_IRQ_FAST_3 = (int)((1U << 31) | 19U),  ///< Cause: Fast-Interrupt 3
-  RVX_IRQ_FAST_4 = (int)((1U << 31) | 20U),  ///< Cause: Fast-Interrupt 4
-  RVX_IRQ_FAST_5 = (int)((1U << 31) | 21U),  ///< Cause: Fast-Interrupt 5
-  RVX_IRQ_FAST_6 = (int)((1U << 31) | 22U),  ///< Cause: Fast-Interrupt 6
-  RVX_IRQ_FAST_7 = (int)((1U << 31) | 23U),  ///< Cause: Fast-Interrupt 7
-  RVX_IRQ_FAST_8 = (int)((1U << 31) | 24U),  ///< Cause: Fast-Interrupt 8
-  RVX_IRQ_FAST_9 = (int)((1U << 31) | 25U),  ///< Cause: Fast-Interrupt 9
-  RVX_IRQ_FAST_10 = (int)((1U << 31) | 26U), ///< Cause: Fast-Interrupt 10
-  RVX_IRQ_FAST_11 = (int)((1U << 31) | 27U), ///< Cause: Fast-Interrupt 11
-  RVX_IRQ_FAST_12 = (int)((1U << 31) | 28U), ///< Cause: Fast-Interrupt 12
-  RVX_IRQ_FAST_13 = (int)((1U << 31) | 29U), ///< Cause: Fast-Interrupt 13
-  RVX_IRQ_FAST_14 = (int)((1U << 31) | 30U), ///< Cause: Fast-Interrupt 14
-  RVX_IRQ_FAST_15 = (int)((1U << 31) | 31U)  ///< Cause: Fast-Interrupt 15
+  RVX_TRAP_CAUSE_MSI = (int)((1U << 31) | 3U),      ///< Trap cause: M-mode Software Interrupt (MSI).
+  RVX_TRAP_CAUSE_MTI = (int)((1U << 31) | 11U),     ///< Trap cause: M-mode External Interrupt (MEI).
+  RVX_TRAP_CAUSE_FAST_0 = (int)((1U << 31) | 16U),  ///< Trap cause: Fast-Interrupt 0
+  RVX_TRAP_CAUSE_FAST_1 = (int)((1U << 31) | 17U),  ///< Trap cause: Fast-Interrupt 1
+  RVX_TRAP_CAUSE_FAST_2 = (int)((1U << 31) | 18U),  ///< Trap cause: Fast-Interrupt 2
+  RVX_TRAP_CAUSE_FAST_3 = (int)((1U << 31) | 19U),  ///< Trap cause: Fast-Interrupt 3
+  RVX_TRAP_CAUSE_FAST_4 = (int)((1U << 31) | 20U),  ///< Trap cause: Fast-Interrupt 4
+  RVX_TRAP_CAUSE_FAST_5 = (int)((1U << 31) | 21U),  ///< Trap cause: Fast-Interrupt 5
+  RVX_TRAP_CAUSE_FAST_6 = (int)((1U << 31) | 22U),  ///< Trap cause: Fast-Interrupt 6
+  RVX_TRAP_CAUSE_FAST_7 = (int)((1U << 31) | 23U),  ///< Trap cause: Fast-Interrupt 7
+  RVX_TRAP_CAUSE_FAST_8 = (int)((1U << 31) | 24U),  ///< Trap cause: Fast-Interrupt 8
+  RVX_TRAP_CAUSE_FAST_9 = (int)((1U << 31) | 25U),  ///< Trap cause: Fast-Interrupt 9
+  RVX_TRAP_CAUSE_FAST_10 = (int)((1U << 31) | 26U), ///< Trap cause: Fast-Interrupt 10
+  RVX_TRAP_CAUSE_FAST_11 = (int)((1U << 31) | 27U), ///< Trap cause: Fast-Interrupt 11
+  RVX_TRAP_CAUSE_FAST_12 = (int)((1U << 31) | 28U), ///< Trap cause: Fast-Interrupt 12
+  RVX_TRAP_CAUSE_FAST_13 = (int)((1U << 31) | 29U), ///< Trap cause: Fast-Interrupt 13
+  RVX_TRAP_CAUSE_FAST_14 = (int)((1U << 31) | 30U), ///< Trap cause: Fast-Interrupt 14
+  RVX_TRAP_CAUSE_FAST_15 = (int)((1U << 31) | 31U)  ///< Trap cause: Fast-Interrupt 15
 } RvxTrapCauseCode;
 
 /// The direction of a GPIO pin.
