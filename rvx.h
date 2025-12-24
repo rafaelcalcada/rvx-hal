@@ -1054,6 +1054,33 @@ static inline bool rvx_uart_tx_ready(RvxUart *uart_address)
 }
 
 /**
+ * @brief Busy-wait until the UART transmission is complete.
+ * 
+ * This function continuously checks the UART status register and returns only when the UART is ready to
+ * send new data.
+ *
+ * Example usage:
+ *
+ * ```c
+ * // Assume UART is mapped at address 0x80000000
+ * RvxUart *uart_address = (RvxUart *)0x80000000;
+ *
+ * // Send data
+ * rvx_uart_write(uart_address, 'A');
+ * 
+ * // Busy-wait until transmission above is complete
+ * rvx_uart_wait_tx_complete(uart_address);
+ * ```
+ *
+ * @param uart_address Pointer to the base address of the UART peripheral.
+ */
+static inline void rvx_uart_wait_tx_complete(RvxUart *uart_address)
+{
+  while (!rvx_uart_tx_ready(uart_address))
+    ;
+}
+
+/**
  * @brief Check if the UART has received new data.
  *
  * Returns `true` if new data has been received and is waiting to be read, or `false` otherwise.
@@ -1110,8 +1137,9 @@ static inline uint8_t rvx_uart_read(RvxUart *uart_address)
 /**
  * @brief Send a single byte over the UART.
  *
- * This function busy-waits until the UART is ready before performing the write, ensuring
- * that the byte is transmitted safely.
+ * This function busy-waits until the UART is ready before performing the write. There is no
+ * need to call `rvx_uart_tx_ready()` or `rvx_uart_wait_tx_complete()` beforehand, as this
+ * function handles waiting internally.
  *
  * Example usage:
  *
@@ -1119,8 +1147,11 @@ static inline uint8_t rvx_uart_read(RvxUart *uart_address)
  * // Assume UART is mapped at address 0x80000000
  * RvxUart *uart_address = (RvxUart *)0x80000000;
  *
- * // Send the character 'A' over UART, waiting if necessary
+ * // Send 'A' over UART
  * rvx_uart_write(uart_address, 'A');
+ * 
+ * // Send 'B', busy-waits until 'A' has been fully transmitted
+ * rvx_uart_write(uart_address, 'B');
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1128,8 +1159,7 @@ static inline uint8_t rvx_uart_read(RvxUart *uart_address)
  */
 static inline void rvx_uart_write(RvxUart *uart_address, uint8_t data)
 {
-  while (!rvx_uart_tx_ready(uart_address))
-    ;
+  rvx_uart_wait_tx_complete(uart_address);
   uart_address->RVX_UART_WRITE_REG = data;
 }
 
