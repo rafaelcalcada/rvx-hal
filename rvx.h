@@ -189,10 +189,10 @@ typedef struct RVX_ALIGNED RvxSpiManager
 typedef struct RVX_ALIGNED RvxTimer
 {
   volatile uint32_t RVX_TIMER_CONTROL;   ///< RVX Timer Control Register.
-  volatile uint32_t RVX_TIMER_COUNTER_L; ///< Lower 32-bits of the RVX Timer Counter Register.
-  volatile uint32_t RVX_TIMER_COUNTER_H; ///< Upper 32-bits of the RVX Timer Counter Register.
-  volatile uint32_t RVX_TIMER_COMPARE_L; ///< Lower 32-bits of the RVX Timer Compare Register.
-  volatile uint32_t RVX_TIMER_COMPARE_H; ///< Upper 32-bits of the RVX Timer Compare Register.
+  volatile uint32_t RVX_TIMER_COUNTERL; ///< Lower 32-bits of the RVX Timer Counter Register.
+  volatile uint32_t RVX_TIMER_COUNTERH; ///< Upper 32-bits of the RVX Timer Counter Register.
+  volatile uint32_t RVX_TIMER_COMPAREL; ///< Lower 32-bits of the RVX Timer Compare Register.
+  volatile uint32_t RVX_TIMER_COMPAREH; ///< Upper 32-bits of the RVX Timer Compare Register.
 } RvxTimer;
 
 /// Provide access to UART registers.
@@ -978,8 +978,8 @@ static inline void rvx_timer_disable(RvxTimer *timer_address)
  */
 static inline void rvx_timer_set_counter(RvxTimer *timer_address, uint64_t new_value)
 {
-  timer_address->RVX_TIMER_COUNTER_H = (uint32_t)(new_value >> 32);
-  timer_address->RVX_TIMER_COUNTER_L = (uint32_t)(new_value & 0xFFFFFFFFU);
+  timer_address->RVX_TIMER_COUNTERH = (uint32_t)(new_value >> 32);
+  timer_address->RVX_TIMER_COUNTERL = (uint32_t)(new_value & 0xFFFFFFFFU);
 }
 
 /**
@@ -993,9 +993,9 @@ static inline uint64_t rvx_timer_get_counter(RvxTimer *timer_address)
   uint32_t hi1, hi2, lo;
   do
   {
-    hi1 = timer_address->RVX_TIMER_COUNTER_H;
-    lo = timer_address->RVX_TIMER_COUNTER_L;
-    hi2 = timer_address->RVX_TIMER_COUNTER_H;
+    hi1 = timer_address->RVX_TIMER_COUNTERH;
+    lo = timer_address->RVX_TIMER_COUNTERL;
+    hi2 = timer_address->RVX_TIMER_COUNTERH;
   } while (hi1 != hi2);
   return ((uint64_t)hi2 << 32) | lo;
 }
@@ -1009,8 +1009,8 @@ static inline uint64_t rvx_timer_get_counter(RvxTimer *timer_address)
  */
 static inline void rvx_timer_clear_counter(RvxTimer *timer_address)
 {
-  timer_address->RVX_TIMER_COUNTER_H = 0;
-  timer_address->RVX_TIMER_COUNTER_L = 0;
+  timer_address->RVX_TIMER_COUNTERH = 0;
+  timer_address->RVX_TIMER_COUNTERL = 0;
 }
 
 /**
@@ -1033,9 +1033,9 @@ static inline void rvx_timer_clear_counter(RvxTimer *timer_address)
  */
 static inline void rvx_timer_set_compare(RvxTimer *timer_address, uint64_t new_value)
 {
-  timer_address->RVX_TIMER_COMPARE_L = 0xFFFFFFFFU;
-  timer_address->RVX_TIMER_COMPARE_H = new_value >> 32;
-  timer_address->RVX_TIMER_COMPARE_L = new_value & 0xFFFFFFFFU;
+  timer_address->RVX_TIMER_COMPAREL = 0xFFFFFFFFU;
+  timer_address->RVX_TIMER_COMPAREH = new_value >> 32;
+  timer_address->RVX_TIMER_COMPAREL = new_value & 0xFFFFFFFFU;
 }
 
 /**
