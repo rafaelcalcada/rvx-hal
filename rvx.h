@@ -970,6 +970,17 @@ static inline void rvx_timer_disable(RvxTimer *timer_address)
 }
 
 /**
+ * @brief Check if the timer counter is enabled.
+ * 
+ * @param timer_address Pointer to the base address of the Timer peripheral.
+ * @return true if the timer is enabled, false otherwise.
+ */
+static inline bool rvx_timer_is_enabled(RvxTimer *timer_address)
+{
+  return RVX_READ_BIT(timer_address->RVX_TIMER_COUNTER_ENABLE, 0);
+}
+
+/**
  * @brief Set a new value for the timer counter. The value can be updated whether counting is
  * enabled or disabled.
  *
@@ -1038,6 +1049,29 @@ static inline void rvx_timer_set_compare(RvxTimer *timer_address, uint64_t new_v
   timer_address->RVX_TIMER_COMPAREL = 0xFFFFFFFFU;
   timer_address->RVX_TIMER_COMPAREH = new_value >> 32;
   timer_address->RVX_TIMER_COMPAREL = new_value & 0xFFFFFFFFU;
+}
+
+/**
+ * @brief Get the current value of the 64-bit timer compare register.
+ * 
+ * @param timer_address Pointer to the base address of the Timer peripheral.
+ * @return uint64_t The current value of the compare register.
+ */
+static inline uint64_t rvx_timer_get_compare(RvxTimer *timer_address)
+{
+  uint32_t hi, lo;
+  return ((uint64_t)hi << 32) | lo;
+}
+
+/**
+ * @brief Clear the timer interrupt by setting the compare register to its maximum value.
+ * 
+ * @param timer_address Pointer to the base address of the Timer peripheral.
+ */
+static inline void rvx_timer_clear_interrupt(RvxTimer *timer_address)
+{
+  timer_address->RVX_TIMER_COMPAREL = 0xFFFFFFFFU;
+  timer_address->RVX_TIMER_COMPAREH = 0xFFFFFFFFU;
 }
 
 /**
