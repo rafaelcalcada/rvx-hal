@@ -188,7 +188,7 @@ typedef struct RVX_ALIGNED RvxSpiManager
 // Provide access to RVX Timer registers.
 typedef struct RVX_ALIGNED RvxTimer
 {
-  volatile uint32_t RVX_TIMER_CONTROL;   ///< RVX Timer Control Register.
+  volatile uint32_t RVX_TIMER_COUNTER_ENABLE;   ///< RVX Timer Counter Enable Register.
   volatile uint32_t RVX_TIMER_COUNTERL; ///< Lower 32-bits of the RVX Timer Counter Register.
   volatile uint32_t RVX_TIMER_COUNTERH; ///< Upper 32-bits of the RVX Timer Counter Register.
   volatile uint32_t RVX_TIMER_COMPAREL; ///< Lower 32-bits of the RVX Timer Compare Register.
@@ -953,7 +953,7 @@ static inline uint8_t rvx_spi_transfer(RvxSpiManager *spi_address, const uint8_t
  */
 static inline void rvx_timer_enable(RvxTimer *timer_address)
 {
-  RVX_SET_BIT(timer_address->RVX_TIMER_CONTROL, 0);
+  RVX_SET_BIT(timer_address->RVX_TIMER_COUNTER_ENABLE, 0);
 }
 
 /**
@@ -966,7 +966,7 @@ static inline void rvx_timer_enable(RvxTimer *timer_address)
  */
 static inline void rvx_timer_disable(RvxTimer *timer_address)
 {
-  RVX_CLR_BIT(timer_address->RVX_TIMER_CONTROL, 0);
+  RVX_CLR_BIT(timer_address->RVX_TIMER_COUNTER_ENABLE, 0);
 }
 
 /**
@@ -978,6 +978,7 @@ static inline void rvx_timer_disable(RvxTimer *timer_address)
  */
 static inline void rvx_timer_set_counter(RvxTimer *timer_address, uint64_t new_value)
 {
+  timer_address->RVX_TIMER_COUNTERL = 0x00000000U; // Temporarily set lower 32 bits to 0
   timer_address->RVX_TIMER_COUNTERH = (uint32_t)(new_value >> 32);
   timer_address->RVX_TIMER_COUNTERL = (uint32_t)(new_value & 0xFFFFFFFFU);
 }
@@ -1009,6 +1010,7 @@ static inline uint64_t rvx_timer_get_counter(RvxTimer *timer_address)
  */
 static inline void rvx_timer_clear_counter(RvxTimer *timer_address)
 {
+  timer_address->RVX_TIMER_COUNTERL = 0;
   timer_address->RVX_TIMER_COUNTERH = 0;
   timer_address->RVX_TIMER_COUNTERL = 0;
 }
