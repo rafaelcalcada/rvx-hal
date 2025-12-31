@@ -1059,8 +1059,7 @@ static inline void rvx_timer_set_compare(RvxTimer *timer_address, uint64_t new_v
  */
 static inline uint64_t rvx_timer_get_compare(RvxTimer *timer_address)
 {
-  uint32_t hi, lo;
-  return ((uint64_t)hi << 32) | lo;
+  return ((uint64_t)timer_address->RVX_TIMER_COMPAREH << 32) | timer_address->RVX_TIMER_COMPAREL;
 }
 
 /**
