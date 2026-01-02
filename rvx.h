@@ -167,7 +167,7 @@ typedef enum RvxSpiMode
 /// Provide access to GPIO registers.
 typedef struct RVX_ALIGNED RvxGpio
 {
-  volatile uint32_t RVX_GPIO_INPUT_REG;         ///< RVX GPIO Input Register.
+  volatile uint32_t RVX_GPIO_READ_REG;         ///< RVX GPIO Read Register.
   volatile uint32_t RVX_GPIO_OUTPUT_ENABLE_REG; ///< RVX GPIO Output Enable Register.
   volatile uint32_t RVX_GPIO_OUTPUT_REG;        ///< RVX GPIO Output Register.
   volatile uint32_t RVX_GPIO_CLEAR_REG;         ///< RVX GPIO Clear Register.
@@ -538,7 +538,7 @@ static inline void rvx_gpio_pin_configure(RvxGpio *gpio_address, const uint8_t p
  */
 static inline bool rvx_gpio_pin_read(RvxGpio *gpio_address, const uint8_t pin_index)
 {
-  return RVX_READ_BIT(gpio_address->RVX_GPIO_INPUT_REG, pin_index);
+  return RVX_READ_BIT(gpio_address->RVX_GPIO_READ_REG, pin_index);
 }
 
 /**
@@ -696,7 +696,7 @@ static inline void rvx_gpio_configure_all(RvxGpio *gpio_address, const uint32_t 
  */
 static inline uint32_t rvx_gpio_read_all(RvxGpio *gpio_address)
 {
-  return gpio_address->RVX_GPIO_INPUT_REG;
+  return gpio_address->RVX_GPIO_READ_REG;
 }
 
 /**
