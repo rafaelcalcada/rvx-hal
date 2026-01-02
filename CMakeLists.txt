@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(rvx LANGUAGES C)
 
-add_library(rvx INTERFACE rvx.h)
+add_library(rvx INTERFACE include/rvx.h)
 
 target_include_directories(rvx
   INTERFACE
