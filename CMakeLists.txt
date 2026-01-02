@@ -9,5 +9,5 @@ add_library(rvx INTERFACE rvx.h)
 
 target_include_directories(rvx
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/include
 )
