@@ -6,19 +6,19 @@ ENTRY(rvx_boot)
 
 MEMORY
 {
-  RAM (wx)  : ORIGIN = 0x00000000, LENGTH = __memory_size
+  RVX_TCM (wx)  : ORIGIN = 0x00000000, LENGTH = __memory_size
 }
 
 PHDRS
 {
-  text PT_LOAD FLAGS(5); /* PF_R+PF_X (Read, execute) */
-  data PT_LOAD FLAGS(6); /* PF_R+PF_W (Read, write) */
+  text PT_LOAD FLAGS(5); /* (Read, execute) */
+  data PT_LOAD FLAGS(6); /* (Read, write)   */
 }
 
 SECTIONS
 {
 
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 1K;
+  __stack_size = DEFINED(__stack_size) ? __stack_size : 0;
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0;
 
   .text :
@@ -51,45 +51,31 @@ SECTIONS
 
     . = ALIGN(4);
     *(.srodata*)
-  } > RAM :text
+  } > RVX_TCM :text
 
   .data : ALIGN(4)
   {
     *(.data*)
     *(.gnu.linkonce.d.*)
 
-    . = ALIGN(4);
-    PROVIDE( __global_pointer$ = . + 0x800 );
+    . = ALIGN(8);
+    __sdata_start = .;
     *(.sdata*)
     *(.gnu.linkonce.s.*)
+    __sdata_end = .;
+  } > RVX_TCM :data
 
-    . = ALIGN(4);
-  } > RAM :data
-
-  .bss : ALIGN(4)
+  .bss (NOLOAD) : ALIGN(4)
   {
-    PROVIDE ( __bss_start = . );
+    PROVIDE(__bss_start = .);
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss*)
     *(.gnu.linkonce.b.*)
     *(COMMON)
-
     . = ALIGN(4);
-  } > RAM :data
-
-  .heap : ALIGN(4)
-  {
-    PROVIDE ( end = . );
-    PROVIDE ( _end = . );
-    . = . + __heap_size;
-  } > RAM :data
-
-  .stack : ALIGN(4)
-  {
-    . += __stack_size;
-    . = ALIGN(4);
-  } > RAM :data
+    PROVIDE(__bss_end = .);
+  } > RVX_TCM
 
   /DISCARD/ :
   {
@@ -99,14 +85,18 @@ SECTIONS
 
 }
 
-PROVIDE( __stack_limit              = ORIGIN(RAM) + LENGTH(RAM) - __stack_size);
-PROVIDE( __stack_top                = ORIGIN(RAM) + LENGTH(RAM));
+PROVIDE( __stack_limit              = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM) - __stack_size);
+PROVIDE( __stack_top                = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM));
+
+PROVIDE( _end = ALIGN(ADDR(.bss) + SIZEOF(.bss), 8));
+PROVIDE( end  = _end);
+
+PROVIDE( __bss_start  = __bss_start);
+PROVIDE( __bss_end    = __bss_end);
+
+PROVIDE( __heap_start = _end);
+PROVIDE( __heap_end   = __heap_start + __heap_size);
+
+ASSERT( __heap_end <= __stack_limit, "ERROR: Program won't fit in RVX tightly coupled memory. Please increase memory size or reduce program, heap or stack sizes.");
+
 PROVIDE( __freertos_irq_stack_top   = __stack_top);
-
-PROVIDE( __data_source_start        = LOADADDR(.data));
-PROVIDE( __data_target_start        = ADDR(.data));
-PROVIDE( __data_target_end          = ADDR(.data) + SIZEOF(.data));
-
-PROVIDE( __bss_source_start         = LOADADDR(.bss));
-PROVIDE( __bss_target_start         = ADDR(.bss));
-PROVIDE( __bss_target_end           = ADDR(.bss) + SIZEOF(.bss));

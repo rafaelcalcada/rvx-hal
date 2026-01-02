@@ -6,23 +6,20 @@
 .option norvc;
 
 rvx_boot:
-  .option push
-  .option norelax
-  la gp, __global_pointer$
-  .option pop
+  la gp, 0
   la sp, __stack_top
+  la t0, __bss_start
+  la t1, __bss_end
+1:
+  bgeu t0, t1, 2f
+  sw zero, 0(t0)
+  addi t0, t0, 4
+  j 1b
+2:
   la t0, rvx_trap_vector
   csrw mtvec, t0
 
-#ifdef STARTUP_DATA_ROM
-  la a0, __data_target_start
-  la a2, __data_target_end
-  sub a2, a2, a0
-  li a1, __data_source_start
-  call memcpy
-#endif
-
-#ifdef NO_STARTUP_FILES
+#ifdef RVX_BARE_METAL
   call main
 #else
   call _start
