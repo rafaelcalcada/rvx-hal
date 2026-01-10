@@ -48,64 +48,64 @@
 
 /// @name U-mode Counter CSRs
 /// @{
-#define RVX_CYCLE_CSR 0xC00    ///< Address of the U-mode Cycle CSR (lower 32 bits).
-#define RVX_TIME_CSR 0xC01     ///< Address of the U-mode Time CSR (lower 32 bits).
-#define RVX_INSTRET_CSR 0xC02  ///< Address of the U-mode Instructions Retired CSR (lower 32 bits).
-#define RVX_CYCLEH_CSR 0xC80   ///< Address of the U-mode Cycle CSR (upper 32 bits).
-#define RVX_TIMEH_CSR 0xC81    ///< Address of the U-mode Time CSR (upper 32 bits).
-#define RVX_INSTRETH_CSR 0xC82 ///< Address of the U-mode Instructions Retired CSR (upper 32 bits).
+#define RVX_CSR_CYCLEL_ADDR 0xC00   ///< Address of the U-mode Cycle CSR (lower 32 bits).
+#define RVX_CSR_TIMEL_ADDR 0xC01    ///< Address of the U-mode Time CSR (lower 32 bits).
+#define RVX_CSR_INSTRETL_ADDR 0xC02 ///< Address of the U-mode Instructions Retired CSR (lower 32 bits).
+#define RVX_CSR_CYCLEH_ADDR 0xC80   ///< Address of the U-mode Cycle CSR (upper 32 bits).
+#define RVX_CSR_TIMEH_ADDR 0xC81    ///< Address of the U-mode Time CSR (upper 32 bits).
+#define RVX_CSR_INSTRETH_ADDR 0xC82 ///< Address of the U-mode Instructions Retired CSR (upper 32 bits).
 /// @}
 
 /// @name M-mode Information CSRs
 /// @{
-#define RVX_MARCHID_CSR 0xF12 ///< Address of the M-mode Architecture ID CSR.
-#define RVX_MIMPID_CSR 0xF13  ///< Address of the M-mode Implementation ID CSR.
+#define RVX_CSR_MARCHID_ADDR 0xF12 ///< Address of the M-mode Architecture ID CSR.
+#define RVX_CSR_MIMPID_ADDR 0xF13  ///< Address of the M-mode Implementation ID CSR.
 /// @}
 
 /// @name M-mode Trap Setup CSRs
 /// @{
-#define RVX_MSTATUS_CSR 0x300  ///< Address of the M-mode Status CSR (lower 32 bits).
-#define RVX_MISA_CSR 0x301     ///< Address of the M-mode ISA CSR.
-#define RVX_MIE_CSR 0x304      ///< Address of the M-mode Interrupt Enable CSR.
-#define RVX_MTVEC_CSR 0x305    ///< Address of the M-mode Trap-Vector Base Address CSR.
-#define RVX_MSTATUSH_CSR 0x310 ///< Address of the M-mode Status CSR (upper 32 bits).
+#define RVX_CSR_MSTATUSL_ADDR 0x300 ///< Address of the M-mode Status CSR (lower 32 bits).
+#define RVX_CSR_MISA_ADDR 0x301     ///< Address of the M-mode ISA CSR.
+#define RVX_CSR_MIE_ADDR 0x304      ///< Address of the M-mode Interrupt Enable CSR.
+#define RVX_CSR_MTVEC_ADDR 0x305    ///< Address of the M-mode Trap-Vector CSR.
+#define RVX_CSR_MSTATUSH_ADDR 0x310 ///< Address of the M-mode Status CSR (upper 32 bits).
 /// @}
 
 /// @name M-mode Trap Handling CSRs
 /// @{
-#define RVX_MSCRATCH_CSR 0x340 ///< Address of the M-mode Scratch CSR.
-#define RVX_MEPC_CSR 0x341     ///< Address of the M-mode Exception Program Counter CSR.
-#define RVX_MCAUSE_CSR 0x342   ///< Address of the M-mode Trap Cause CSR.
-#define RVX_MTVAL_CSR 0x343    ///< Address of the M-mode Trap Value CSR.
-#define RVX_MIP_CSR 0x344      ///< Address of the M-mode Interrupt Pending CSR.
+#define RVX_CSR_MSCRATCH_ADDR 0x340 ///< Address of the M-mode Scratch CSR.
+#define RVX_CSR_MEPC_ADDR 0x341     ///< Address of the M-mode Exception Program Counter CSR.
+#define RVX_CSR_MCAUSE_ADDR 0x342   ///< Address of the M-mode Trap Cause CSR.
+#define RVX_CSR_MTVAL_ADDR 0x343    ///< Address of the M-mode Trap Value CSR.
+#define RVX_CSR_MIP_ADDR 0x344      ///< Address of the M-mode Interrupt Pending CSR.
 /// @}
 
 /// @name M-mode Counter CSRs
 /// @{
-#define RVX_MCYCLE_CSR 0xB00    ///< Address of the M-mode Cycle CSR (lower 32 bits).
-#define RVX_MINSTRET_CSR 0xB02  ///< Address of the M-mode Instructions Retired CSR (lower 32 bits).
-#define RVX_MCYCLEH_CSR 0xB80   ///< Address of the M-mode Cycle CSR (upper 32 bits).
-#define RVX_MINSTRETH_CSR 0xB82 ///< Address of the M-mode Instructions Retired CSR (upper 32 bits).
+#define RVX_CSR_MCYCLEL_ADDR 0xB00   ///< Address of the M-mode Cycle CSR (lower 32 bits).
+#define RVX_CSR_MINSTRETL_ADDR 0xB02 ///< Address of the M-mode Instructions Retired CSR (lower 32 bits).
+#define RVX_CSR_MCYCLEH_ADDR 0xB80   ///< Address of the M-mode Cycle CSR (upper 32 bits).
+#define RVX_CSR_MINSTRETH_ADDR 0xB82 ///< Address of the M-mode Instructions Retired CSR (upper 32 bits).
 /// @}
 
-/// @name Bit masks for MSTATUS register fields.
+/// @name Bit masks for M-mode Status CSR fields.
 /// @{
-#define RVX_MSTATUS_MIE_MASK (1U << 3U)  ///< Mask for the MIE bit in MSTATUS.
-#define RVX_MSTATUS_MPIE_MASK (1U << 7U) ///< Mask for the MPIE bit in MSTATUS.
+#define RVX_CSR_MSTATUSL_MIE_BITMASK (1U << 3U)  ///< Bitmask for the MIE bit in the M-mode Status CSR.
+#define RVX_CSR_MSTATUSL_MPIE_BITMASK (1U << 7U) ///< Bitmask for the MPIE bit in the M-mode Status CSR.
 /// @}
 
 /// @name Bit masks for MTVEC register fields.
 /// @{
-#define RVX_MTVEC_MODE_MASK 0x00000003U ///< Mask for the `mode` field in MTVEC.
-#define RVX_MTVEC_BASE_MASK 0xFFFFFFFCU ///< Mask for the `base` field in MTVEC.
+#define RVX_CSR_MTVEC_MODE_BITMASK 0x00000003U ///< Bitmask for the MODE field in the M-mode Trap-Vector CSR.
+#define RVX_CSR_MTVEC_BASE_BITMASK 0xFFFFFFFCU ///< Bitmask for the BASE field in the M-mode Trap-Vector CSR.
 /// @}
 
 /// @name Bit masks for MIE and MIP interrupt enable/pending bits.
 /// @{
-#define RVX_IRQ_MSI_MASK (1U << 3U)              ///< Mask for the MSI enable/pending bit.
-#define RVX_IRQ_MTI_MASK (1U << 7U)              ///< Mask for the MTI enable/pending bit.
-#define RVX_IRQ_MEI_MASK (1U << 11U)             ///< Mask for the MEI enable/pending bit.
-#define RVX_IRQ_FAST_MASK(n) (1U << (16U + (n))) ///< Mask for the Fast IRQ `n` enable/pending bit.
+#define RVX_IRQ_MSI_BITMASK (1U << 3U)              ///< Bitmask for the MSI enable/pending bit.
+#define RVX_IRQ_MTI_BITMASK (1U << 7U)              ///< Bitmask for the MTI enable/pending bit.
+#define RVX_IRQ_MEI_BITMASK (1U << 11U)             ///< Bitmask for the MEI enable/pending bit.
+#define RVX_IRQ_FAST_BITMASK(n) (1U << (16U + (n))) ///< Bitmask for the Fast IRQ `n` enable/pending bit.
 /// @}
 
 /// @brief Standard RISC-V trap cause codes for the MCAUSE CSR.
@@ -364,7 +364,7 @@ typedef struct RVX_ALIGNED RvxUart
  */
 static inline void rvx_irq_enable(uint32_t bit_mask)
 {
-  RVX_CSR_SET(RVX_MIE_CSR, bit_mask);
+  RVX_CSR_SET(RVX_CSR_MIE_ADDR, bit_mask);
 }
 
 /**
@@ -383,7 +383,7 @@ static inline void rvx_irq_enable(uint32_t bit_mask)
  */
 static inline void rvx_irq_enable_global(void)
 {
-  RVX_CSR_SET(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
+  RVX_CSR_SET(RVX_CSR_MSTATUSL_ADDR, RVX_CSR_MSTATUSL_MIE_BITMASK);
 }
 
 /**
@@ -405,7 +405,7 @@ static inline void rvx_irq_enable_global(void)
  */
 static inline void rvx_irq_disable(uint32_t bit_mask)
 {
-  RVX_CSR_CLEAR(RVX_MIE_CSR, bit_mask);
+  RVX_CSR_CLEAR(RVX_CSR_MIE_ADDR, bit_mask);
 }
 
 /**
@@ -423,7 +423,7 @@ static inline void rvx_irq_disable(uint32_t bit_mask)
  */
 static inline void rvx_irq_disable_global(void)
 {
-  RVX_CSR_CLEAR(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
+  RVX_CSR_CLEAR(RVX_CSR_MSTATUSL_ADDR, RVX_CSR_MSTATUSL_MIE_BITMASK);
 }
 
 /**
@@ -441,9 +441,9 @@ static inline void rvx_irq_disable_global(void)
 static inline void rvx_irq_enable_vectored_mode(void)
 {
   uint32_t base;
-  RVX_CSR_READ(RVX_MTVEC_CSR, base);
-  base = base & RVX_MTVEC_BASE_MASK;
-  RVX_CSR_WRITE(RVX_MTVEC_CSR, base | 1);
+  RVX_CSR_READ(RVX_CSR_MTVEC_ADDR, base);
+  base = base & RVX_CSR_MTVEC_BASE_BITMASK;
+  RVX_CSR_WRITE(RVX_CSR_MTVEC_ADDR, base | 1);
 }
 
 /**
@@ -460,7 +460,7 @@ static inline void rvx_irq_enable_vectored_mode(void)
  */
 static inline void rvx_irq_enable_direct_mode(void)
 {
-  RVX_CSR_CLEAR(RVX_MTVEC_CSR, RVX_MTVEC_MODE_MASK);
+  RVX_CSR_CLEAR(RVX_CSR_MTVEC_ADDR, RVX_CSR_MTVEC_MODE_BITMASK);
 }
 
 /**
