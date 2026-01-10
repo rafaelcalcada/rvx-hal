@@ -60,6 +60,7 @@ SECTIONS
 
     . = ALIGN(8);
     __sdata_start = .;
+    PROVIDE(__global_pointer$ = __sdata_start + 0x800);
     *(.sdata*)
     *(.gnu.linkonce.s.*)
     __sdata_end = .;
@@ -90,9 +91,6 @@ PROVIDE( __stack_top                = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM));
 
 PROVIDE( _end = ALIGN(ADDR(.bss) + SIZEOF(.bss), 8));
 PROVIDE( end  = _end);
-
-PROVIDE( __bss_start  = __bss_start);
-PROVIDE( __bss_end    = __bss_end);
 
 PROVIDE( __heap_start = _end);
 PROVIDE( __heap_end   = __heap_start + __heap_size);

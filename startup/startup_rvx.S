@@ -6,7 +6,7 @@
 .option norvc;
 
 rvx_boot:
-  la gp, 0
+  la gp, __global_pointer$
   la sp, __stack_top
   la t0, __bss_start
   la t1, __bss_end
