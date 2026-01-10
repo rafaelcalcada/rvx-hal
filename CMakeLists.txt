@@ -75,7 +75,7 @@ target_compile_options(rvx_hal
     -fdata-sections
     -march=${RVX_ARCH}
     -mabi=ilp32
-    -msmall-data-limit=0
+    -mno-relax
 )
 
 # Linker options
@@ -86,9 +86,6 @@ target_link_options(rvx_hal
     -mstrict-align
     -march=${RVX_ARCH}
     -mabi=ilp32
-    -Wl,--defsym=__memory_size=${RVX_MEMORY_SIZE}
-    -Wl,--defsym=__stack_size=${RVX_STACK_SIZE}
-    -Wl,--defsym=__heap_size=${RVX_HEAP_SIZE}
     -Wl,--defsym=__memory_size=${RVX_MEMORY_SIZE}
     -Wl,--defsym=__stack_size=${RVX_STACK_SIZE}
     -Wl,--defsym=__heap_size=${RVX_HEAP_SIZE}
