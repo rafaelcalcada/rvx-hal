@@ -167,7 +167,7 @@ typedef enum RvxSpiMode
 /// Provide access to GPIO registers.
 typedef struct RVX_ALIGNED RvxGpio
 {
-  volatile uint32_t RVX_GPIO_READ_REG;         ///< RVX GPIO Read Register.
+  volatile uint32_t RVX_GPIO_READ_REG;          ///< RVX GPIO Read Register.
   volatile uint32_t RVX_GPIO_OUTPUT_ENABLE_REG; ///< RVX GPIO Output Enable Register.
   volatile uint32_t RVX_GPIO_OUTPUT_REG;        ///< RVX GPIO Output Register.
   volatile uint32_t RVX_GPIO_CLEAR_REG;         ///< RVX GPIO Clear Register.
@@ -188,11 +188,11 @@ typedef struct RVX_ALIGNED RvxSpiManager
 // Provide access to RVX Timer registers.
 typedef struct RVX_ALIGNED RvxTimer
 {
-  volatile uint32_t RVX_TIMER_COUNTER_ENABLE;   ///< RVX Timer Counter Enable Register.
-  volatile uint32_t RVX_TIMER_COUNTERL; ///< Lower 32-bits of the RVX Timer Counter Register.
-  volatile uint32_t RVX_TIMER_COUNTERH; ///< Upper 32-bits of the RVX Timer Counter Register.
-  volatile uint32_t RVX_TIMER_COMPAREL; ///< Lower 32-bits of the RVX Timer Compare Register.
-  volatile uint32_t RVX_TIMER_COMPAREH; ///< Upper 32-bits of the RVX Timer Compare Register.
+  volatile uint32_t RVX_TIMER_COUNTER_ENABLE; ///< RVX Timer Counter Enable Register.
+  volatile uint32_t RVX_TIMER_COUNTERL;       ///< Lower 32-bits of the RVX Timer Counter Register.
+  volatile uint32_t RVX_TIMER_COUNTERH;       ///< Upper 32-bits of the RVX Timer Counter Register.
+  volatile uint32_t RVX_TIMER_COMPAREL;       ///< Lower 32-bits of the RVX Timer Compare Register.
+  volatile uint32_t RVX_TIMER_COMPAREH;       ///< Upper 32-bits of the RVX Timer Compare Register.
 } RvxTimer;
 
 /// Provide access to UART registers.
@@ -207,153 +207,138 @@ typedef struct RVX_ALIGNED RvxUart
 /**
  * @brief Read the value of a Control and Status Register (CSR).
  *
- * This function reads the 32-bit value from the CSR specified by `csr_address`.
+ * This macro reads the 32-bit value from the CSR specified by `csr_address` and
+ * stores it in `csr_read_value`.
  *
  * Example usage:
  * ```c
  * // Read MSTATUS
- * uint32_t mstatus_value = rvx_csr_read(RVX_MSTATUS_CSR);
+ * uint32_t mstatus_value;
+ * RVX_CSR_READ(RVX_MSTATUS_CSR, mstatus_value);
  * ```
  *
  * @param csr_address The address of the CSR to read.
- * @return The 32-bit value read from the specified CSR.
+ * @param csr_read_value `uint32_t` variable to store the value read from the specified CSR.
  */
-static inline uint32_t rvx_csr_read(uint16_t csr_address)
-{
-  uint32_t value;
-  asm volatile("csrr %0, %1" : "=r"(value) : "i"(csr_address));
-  return value;
-}
+#define RVX_CSR_READ(csr_address, csr_read_value) asm volatile("csrr %0, %1" : "=r"(csr_read_value) : "i"(csr_address));
 
 /**
  * @brief Write a value to a Control and Status Register (CSR).
  *
- * This function writes the 32-bit `value` to the CSR specified by `csr_address`.
+ * This macro writes the 32-bit `value` to the CSR specified by `csr_address`.
  *
  * Example usage:
  * ```c
  * // Write 0 to MTVEC
- * rvx_csr_write(RVX_MTVEC_CSR, 0);
+ * RVX_CSR_WRITE(RVX_MTVEC_CSR, 0);
  * ```
  *
  * @param csr_address The address of the CSR to write.
- * @param value 32-bit value to write to the specified CSR.
+ * @param value `uint32_t` value to write to the specified CSR.
  */
-static inline void rvx_csr_write(uint16_t csr_address, uint32_t value)
-{
-  asm volatile("csrw %0, %1" : : "i"(csr_address), "r"(value));
-}
+#define RVX_CSR_WRITE(csr_address, value) asm volatile("csrw %0, %1" : : "i"(csr_address), "r"(value))
 
 /**
- * @brief Atomically read the value of a Control and Status Register (CSR) and write a new value.
+ * @brief Read the value of a Control and Status Register (CSR) and write a new value, atomically.
  *
- * This function performs an atomic read-write operation on the CSR specified by `csr_address`. The
- * old value of the CSR is returned, and `new_value` is written to it.
+ * This macro performs an atomic read-write operation on the CSR specified by `csr_address`. The
+ * old value of the CSR is stored in `csr_old_value`, and then `csr_new_value` is written to the CSR.
+ *
+ * Atomicity is guaranteed, meaning no other operations can interleave between the read and write.
  *
  * Example usage:
  * ```c
  * // Atomically read MSTATUS value and then replace it with 0x00000004
- * uint32_t old_value = rvx_csr_read_write(RVX_MSTATUS_CSR, 0x00000004);
+ * uint32_t csr_old_value;
+ * RVX_CSR_READ_WRITE(RVX_MSTATUS_CSR, csr_old_value, 0x00000004);
  * ```
  *
  * @param csr_address The address of the CSR to read/write.
- * @param new_value 32-bit value to write to the specified CSR.
- * @return The previous 32-bit value of the specified CSR.
+ * @param csr_old_value `uint32_t` variable to store the previous value of the specified CSR.
+ * @param csr_new_value `uint32_t` value to write to the specified CSR.
  */
-static inline uint32_t rvx_csr_read_write(uint16_t csr_address, uint32_t new_value)
-{
-  uint32_t old_value;
-  asm volatile("csrrw %0, %1, %2" : "=r"(old_value) : "i"(csr_address), "r"(new_value));
-  return old_value;
-}
+#define RVX_CSR_READ_WRITE(csr_address, csr_old_value, csr_new_value)                                                  \
+  asm volatile("csrrw %0, %1, %2" : "=r"(csr_old_value) : "i"(csr_address), "r"(csr_new_value));
 
 /**
  * @brief Set specific bits in a Control and Status Register (CSR).
  *
- * This function sets to 1 the bits of the CSR specified by `csr_address` that are set to 1 in
+ * This macro sets to 1 the bits of the CSR specified by `csr_address` that are set to 1 in
  * `bit_mask`. All other bits remain unchanged.
  *
  * Example usage:
  * ```c
  * // Set MIE bit in MSTATUS
- * rvx_csr_set(RVX_MSTATUS_CSR, 0x8);
+ * RVX_CSR_SET(RVX_MSTATUS_CSR, 0x8);
  * ```
  *
  * @param csr_address The address of the CSR to modify.
- * @param bit_mask 32-bit mask indicating which bits should be set.
+ * @param bit_mask `uint32_t` bit mask indicating which bits should be set.
  */
-static inline void rvx_csr_set(uint16_t csr_address, uint32_t bit_mask)
-{
-  asm volatile("csrrs zero, %0, %1" : : "i"(csr_address), "r"(bit_mask));
-}
+#define RVX_CSR_SET(csr_address, bit_mask) asm volatile("csrrs zero, %0, %1" : : "i"(csr_address), "r"(bit_mask))
 
 /**
  * @brief Clear specific bits in a Control and Status Register (CSR).
  *
- * This function sets to 0 the bits of the CSR specified by `csr_address` that are set to 1 in
+ * This macro sets to 0 the bits of the CSR specified by `csr_address` that are set to 1 in
  * `bit_mask`. All other bits remain unchanged.
  *
  * Example usage:
  * ```c
  * // Clear MIE bit in MSTATUS
- * rvx_csr_clear(RVX_MSTATUS_CSR, 0x8);
+ * RVX_CSR_CLEAR(RVX_MSTATUS_CSR, 0x8);
  * ```
  *
  * @param csr_address The address of the CSR to modify.
- * @param bit_mask 32-bit mask indicating which bits should be cleared.
+ * @param bit_mask `uint32_t` bit mask indicating which bits should be cleared.
  */
-static inline void rvx_csr_clear(uint16_t csr_address, uint32_t bit_mask)
-{
-  asm volatile("csrrc zero, %0, %1" : : "i"(csr_address), "r"(bit_mask));
-}
+#define RVX_CSR_CLEAR(csr_address, bit_mask) asm volatile("csrrc zero, %0, %1" : : "i"(csr_address), "r"(bit_mask))
 
 /**
- * @brief Atomically read a Control and Status Register (CSR) and set specific bits.
+ * @brief Read a Control and Status Register (CSR) and set specific bits, atomically.
  *
- * This function performs an atomic read-write operation on the CSR specified by `csr_address`. The
+ * This macro performs an atomic read-write operation on the CSR specified by `csr_address`. The
  * old value of the CSR is returned, and then the bits specified in `bit_mask` are set to 1. All
  * other bits remain unchanged.
+ *
+ * Atomicity is guaranteed, meaning no other operations can interleave between the read and set.
  *
  * Example usage:
  * ```c
  * // Atomically read MSTATUS and then set its MIE bit
- * uint32_t old_value = rvx_csr_read_set(RVX_MSTATUS_CSR, 0x8);
+ * uint32_t csr_old_value;
+ * RVX_CSR_READ_SET(RVX_MSTATUS_CSR, csr_old_value, 0x8);
  * ```
  *
- * @param csr_address The address of the CSR to read/set.
- * @param bit_mask 32-bit mask indicating which bits should be set.
- * @return The previous 32-bit value of the specified CSR.
+ * @param csr_address The address of the CSR to read-and-set.
+ * @param csr_old_value `uint32_t` variable to store the previous value of the specified CSR.
+ * @param bit_mask `uint32_t` bit mask indicating which bits should be set.
  */
-static inline uint32_t rvx_csr_read_set(uint16_t csr_address, uint32_t bit_mask)
-{
-  uint32_t prev;
-  asm volatile("csrrs %0, %1, %2" : "=r"(prev) : "i"(csr_address), "r"(bit_mask));
-  return prev;
-}
+#define RVX_CSR_READ_SET(csr_address, csr_old_value, bit_mask)                                                         \
+  asm volatile("csrrs %0, %1, %2" : "=r"(csr_old_value) : "i"(csr_address), "r"(bit_mask));
 
 /**
- * @brief Atomically read a Control and Status Register (CSR) and clear specific bits.
+ * @brief Read a Control and Status Register (CSR) and clear specific bits, atomically.
  *
- * This function performs an atomic read-write operation on the CSR specified by `csr_address`.
- * The old value of the CSR is returned, and then the bits specified in `bit_mask` are cleared (set
+ * This macro performs an atomic read-write operation on the CSR specified by `csr_address`. The
+ * old value of the CSR is returned, and then the bits specified in `bit_mask` are cleared (set
  * to 0). All other bits remain unchanged.
+ *
+ * Atomicity is guaranteed, meaning no other operations can interleave between the read and clear.
  *
  * Example usage:
  * ```c
  * // Atomically read MSTATUS and then clear its MIE bit
- * uint32_t old_value = rvx_csr_read_clear(RVX_MSTATUS_CSR, 0x8);
+ * uint32_t csr_old_value;
+ * RVX_CSR_READ_CLEAR(RVX_MSTATUS_CSR, csr_old_value, 0x8);
  * ```
  *
  * @param csr_address The address of the CSR to read/clear.
- * @param bit_mask 32-bit mask indicating which bits should be cleared.
- * @return The previous 32-bit value of the specified CSR.
+ * @param csr_old_value `uint32_t` variable to store the previous value of the specified CSR.
+ * @param bit_mask `uint32_t` bit mask indicating which bits should be cleared.
  */
-static inline uint32_t rvx_csr_read_clear(uint16_t csr_address, uint32_t bit_mask)
-{
-  uint32_t prev;
-  asm volatile("csrrc %0, %1, %2" : "=r"(prev) : "i"(csr_address), "r"(bit_mask));
-  return prev;
-}
+#define RVX_CSR_READ_CLEAR(csr_address, csr_old_value, bit_mask)                                                       \
+  asm volatile("csrrc %0, %1, %2" : "=r"(csr_old_value) : "i"(csr_address), "r"(bit_mask));
 
 /**
  * @brief Enable specific machine-level interrupts by setting bits in the MIE CSR.
@@ -379,7 +364,7 @@ static inline uint32_t rvx_csr_read_clear(uint16_t csr_address, uint32_t bit_mas
  */
 static inline void rvx_irq_enable(uint32_t bit_mask)
 {
-  rvx_csr_set(RVX_MIE_CSR, bit_mask);
+  RVX_CSR_SET(RVX_MIE_CSR, bit_mask);
 }
 
 /**
@@ -398,7 +383,7 @@ static inline void rvx_irq_enable(uint32_t bit_mask)
  */
 static inline void rvx_irq_enable_global(void)
 {
-  rvx_csr_set(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
+  RVX_CSR_SET(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
 }
 
 /**
@@ -420,7 +405,7 @@ static inline void rvx_irq_enable_global(void)
  */
 static inline void rvx_irq_disable(uint32_t bit_mask)
 {
-  rvx_csr_clear(RVX_MIE_CSR, bit_mask);
+  RVX_CSR_CLEAR(RVX_MIE_CSR, bit_mask);
 }
 
 /**
@@ -438,7 +423,7 @@ static inline void rvx_irq_disable(uint32_t bit_mask)
  */
 static inline void rvx_irq_disable_global(void)
 {
-  rvx_csr_clear(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
+  RVX_CSR_CLEAR(RVX_MSTATUS_CSR, RVX_MSTATUS_MIE_MASK);
 }
 
 /**
@@ -455,8 +440,10 @@ static inline void rvx_irq_disable_global(void)
  */
 static inline void rvx_irq_enable_vectored_mode(void)
 {
-  uint32_t base = rvx_csr_read(RVX_MTVEC_CSR) & RVX_MTVEC_BASE_MASK;
-  rvx_csr_write(RVX_MTVEC_CSR, base | 1);
+  uint32_t base;
+  RVX_CSR_READ(RVX_MTVEC_CSR, base);
+  base = base & RVX_MTVEC_BASE_MASK;
+  RVX_CSR_WRITE(RVX_MTVEC_CSR, base | 1);
 }
 
 /**
@@ -473,7 +460,7 @@ static inline void rvx_irq_enable_vectored_mode(void)
  */
 static inline void rvx_irq_enable_direct_mode(void)
 {
-  rvx_csr_clear(RVX_MTVEC_CSR, RVX_MTVEC_MODE_MASK);
+  RVX_CSR_CLEAR(RVX_MTVEC_CSR, RVX_MTVEC_MODE_MASK);
 }
 
 /**
@@ -498,8 +485,7 @@ static inline void rvx_irq_enable_direct_mode(void)
  * @param direction Desired pin direction as `RvxGpioPinDirection` (`RVX_GPIO_INPUT` or
  * `RVX_GPIO_OUTPUT`).
  */
-static inline void rvx_gpio_pin_configure(RvxGpio *gpio_address, const uint8_t pin_index,
-                                          RvxGpioPinDirection direction)
+static inline void rvx_gpio_pin_configure(RvxGpio *gpio_address, const uint8_t pin_index, RvxGpioPinDirection direction)
 {
   if (direction == RVX_GPIO_OUTPUT)
   {
@@ -971,7 +957,7 @@ static inline void rvx_timer_disable(RvxTimer *timer_address)
 
 /**
  * @brief Check if the timer counter is enabled.
- * 
+ *
  * @param timer_address Pointer to the base address of the Timer peripheral.
  * @return true if the timer is enabled, false otherwise.
  */
@@ -1053,7 +1039,7 @@ static inline void rvx_timer_set_compare(RvxTimer *timer_address, uint64_t new_v
 
 /**
  * @brief Get the current value of the 64-bit timer compare register.
- * 
+ *
  * @param timer_address Pointer to the base address of the Timer peripheral.
  * @return uint64_t The current value of the compare register.
  */
@@ -1064,7 +1050,7 @@ static inline uint64_t rvx_timer_get_compare(RvxTimer *timer_address)
 
 /**
  * @brief Clear the timer interrupt by setting the compare register to its maximum value.
- * 
+ *
  * @param timer_address Pointer to the base address of the Timer peripheral.
  */
 static inline void rvx_timer_clear_interrupt(RvxTimer *timer_address)
@@ -1090,7 +1076,7 @@ static inline bool rvx_uart_tx_ready(RvxUart *uart_address)
 
 /**
  * @brief Busy-wait until the UART transmission is complete.
- * 
+ *
  * This function continuously checks the UART status register and returns only when the UART is ready to
  * send new data.
  *
@@ -1102,7 +1088,7 @@ static inline bool rvx_uart_tx_ready(RvxUart *uart_address)
  *
  * // Send data
  * rvx_uart_write(uart_address, 'A');
- * 
+ *
  * // Busy-wait until transmission above is complete
  * rvx_uart_wait_tx_complete(uart_address);
  * ```
@@ -1184,7 +1170,7 @@ static inline uint8_t rvx_uart_read(RvxUart *uart_address)
  *
  * // Send 'A' over UART
  * rvx_uart_write(uart_address, 'A');
- * 
+ *
  * // Send 'B', busy-waits until 'A' has been fully transmitted
  * rvx_uart_write(uart_address, 'B');
  * ```
