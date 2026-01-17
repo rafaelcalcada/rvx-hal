@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2020-2026 RVX Project Contributors
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.28)
 
 # Architecture
 if(NOT DEFINED RVX_ARCH)
@@ -25,11 +25,11 @@ if(NOT CMAKE_C_COMPILER)
   set(CMAKE_OBJCOPY "${RISCV_TOOLCHAIN_PREFIX}objcopy" CACHE FILEPATH "objcopy tool")
   set(CMAKE_OBJDUMP "${RISCV_TOOLCHAIN_PREFIX}objdump" CACHE FILEPATH "objdump tool")
   set(CMAKE_SIZE "${RISCV_TOOLCHAIN_PREFIX}size" CACHE FILEPATH "size tool")
-  
+
   # Prevent CMake from testing the compiler (important for cross-compilation)
   set(CMAKE_C_COMPILER_FORCED TRUE)
   set(CMAKE_ASM_COMPILER_FORCED TRUE)
-  
+
   # Set system info
   set(CMAKE_SYSTEM_NAME Generic)
   set(CMAKE_SYSTEM_PROCESSOR riscv32)
@@ -112,7 +112,7 @@ function(rvx_generate_memory_init_file TARGET_NAME)
 
     # Generate disassembly
     COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${TARGET_NAME}> > $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.objdump
-    
+
     # Print info
     COMMAND ${CMAKE_COMMAND} -E echo ""
     COMMAND ${CMAKE_COMMAND} -E echo "Memory init file:   $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.hex"
@@ -124,13 +124,13 @@ function(rvx_generate_memory_init_file TARGET_NAME)
     # Run size tool
     COMMAND ${TOOLCHAIN_PREFIX}size -G $<TARGET_FILE:${TARGET_NAME}>
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    
+
   )
   # Add generated files to clean
   set_property(TARGET ${TARGET_NAME} APPEND PROPERTY ADDITIONAL_CLEAN_FILES
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.bin
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.hex
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.objdump
-    
+
   )
 endfunction()
