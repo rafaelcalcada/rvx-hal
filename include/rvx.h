@@ -11,6 +11,18 @@
 #include <stdbool.h> // for bool type
 #include <stdint.h>  // for uint32_t, uint16_t, uint8_t types
 
+/// Default base address of the RVX UART peripheral.
+#define RVX_UART_ADDRESS (RvxUart *)0x40000000U
+
+/// Default base address of the RVX Timer peripheral.
+#define RVX_TIMER_ADDRESS (RvxTimer *)0x40001000U
+
+/// Default base address of the RVX GPIO peripheral.
+#define RVX_GPIO_ADDRESS (RvxGpio *)0x40002000U
+
+/// Default base address of the RVX SPI Manager peripheral.
+#define RVX_SPI_MANAGER_ADDRESS (RvxSpiManager *)0x40003000U
+
 /// Mark a function or variable as weak, allowing it to be overridden by other definitions.
 #define RVX_WEAK __attribute__((weak))
 
@@ -471,13 +483,10 @@ static inline void rvx_irq_enable_direct_mode(void)
  * action is taken and no error is reported.
  *
  * Example usage:
- * ```c
- * // Assume GPIO is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
+ * ```c *
  * // Configure pin 0 as output and pin 1 as input.
- * rvx_gpio_pin_configure(gpio_address, 0, RVX_GPIO_OUTPUT);
- * rvx_gpio_pin_configure(gpio_address, 1, RVX_GPIO_INPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 0, RVX_GPIO_OUTPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 1, RVX_GPIO_INPUT);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -507,15 +516,12 @@ static inline void rvx_gpio_pin_configure(RvxGpio *gpio_address, const uint8_t p
  * return value is `false`.
  *
  * Example usage:
- * ```c
- * // Assume GPIO is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
+ * ```c *
  * // Configure pin 0 as input.
- * rvx_gpio_pin_configure(gpio_address, 0, RVX_GPIO_INPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 0, RVX_GPIO_INPUT);
  *
  * // Read the state of pin 0.
- * bool pin0_value = rvx_gpio_pin_read(gpio_address, 0);
+ * bool pin0_value = rvx_gpio_pin_read(RVX_GPIO_ADDRESS, 0);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -538,17 +544,14 @@ static inline bool rvx_gpio_pin_read(RvxGpio *gpio_address, const uint8_t pin_in
  * operation is ignored without error.
  *
  * Example usage:
- * ```c
- * // Assume GPIO is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
+ * ```c *
  * // Configure pins 0 and 1 as outputs.
- * rvx_gpio_pin_configure(gpio_address, 0, RVX_GPIO_OUTPUT);
- * rvx_gpio_pin_configure(gpio_address, 1, RVX_GPIO_OUTPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 0, RVX_GPIO_OUTPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 1, RVX_GPIO_OUTPUT);
  *
  * // Write logic 0 to pin 0 and 1 to pin 1.
- * rvx_gpio_pin_write(gpio_address, 0, false);
- * rvx_gpio_pin_write(gpio_address, 1, true);
+ * rvx_gpio_pin_write(RVX_GPIO_ADDRESS, 0, false);
+ * rvx_gpio_pin_write(RVX_GPIO_ADDRESS, 1, true);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -575,14 +578,11 @@ static inline void rvx_gpio_pin_write(RvxGpio *gpio_address, const uint8_t pin_i
  *
  * Example usage:
  * ```c
- * // Assume GPIO is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
  * // Configure pin 0 as output.
- * rvx_gpio_pin_configure(gpio_address, 0, RVX_GPIO_OUTPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 0, RVX_GPIO_OUTPUT);
  *
  * // Write logic 0 to pin 0.
- * rvx_gpio_pin_clear(gpio_address, 0);
+ * rvx_gpio_pin_clear(RVX_GPIO_ADDRESS, 0);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -605,14 +605,11 @@ static inline void rvx_gpio_pin_clear(RvxGpio *gpio_address, const uint8_t pin_i
  *
  * Example usage:
  * ```c
- * // Assume GPIO is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
  * // Configure pin 0 as output.
- * rvx_gpio_pin_configure(gpio_address, 0, RVX_GPIO_OUTPUT);
+ * rvx_gpio_pin_configure(RVX_GPIO_ADDRESS, 0, RVX_GPIO_OUTPUT);
  *
  * // Write logic 1 to pin 0.
- * rvx_gpio_pin_set(gpio_address, 0);
+ * rvx_gpio_pin_set(RVX_GPIO_ADDRESS, 0);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -634,13 +631,9 @@ static inline void rvx_gpio_pin_set(RvxGpio *gpio_address, const uint8_t pin_ind
  * upper bits beyond the number of available pins are ignored by the hardware.
  *
  * Example usage:
- * ```c
- * // This example assumes the GPIO peripheral provides 4 pins and
- * // is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
+ * ```c *
  * // Configure pins 1 and 3 as outputs, pins 0 and 2 as inputs simultaneously.
- * rvx_gpio_configure_all(gpio_address, 0b1010);
+ * rvx_gpio_configure_all(RVX_GPIO_ADDRESS, 0b1010);
  * ```
  *
  * @note To set the direction of a single pin, use `rvx_gpio_pin_configure()` instead.
@@ -661,13 +654,9 @@ static inline void rvx_gpio_configure_all(RvxGpio *gpio_address, const uint32_t 
  * corresponding to implemented pins are valid; higher bits are zero-padded.
  *
  * Example usage:
- * ```c
- * // This example assumes the GPIO peripheral provides 4 pins and
- * // is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
+ * ```c *
  * // Read all pins simultaneously.
- * uint32_t pin_values = rvx_gpio_read_all(gpio_address);
+ * uint32_t pin_values = rvx_gpio_read_all(RVX_GPIO_ADDRESS);
  *
  * // Extract individual pin values.
  * bool pin0_value = (pin_values >> 0) & 1;
@@ -698,18 +687,14 @@ static inline uint32_t rvx_gpio_read_all(RvxGpio *gpio_address)
  *
  * Example usage:
  * ```c
- * // This example assumes the GPIO peripheral provides 4 pins and
- * // is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
  * // Configure pin directions.
  * // Pin 0 = input, pin 1 = output, pin 2 = output, pin 3 = output
- * rvx_gpio_configure_all(gpio_address, 0b1110);
+ * rvx_gpio_configure_all(RVX_GPIO_ADDRESS, 0b1110);
  *
  * // Write values to pins 1, 2, and 3 simultaneously.
  * // Pin 1 = 0, Pin 2 = 1, Pin 3 = 0.
  * // Pin 0 (input) output latch is updated to 1, but pin state remains unaffected.
- * rvx_gpio_write_all(gpio_address, 0b0101);
+ * rvx_gpio_write_all(RVX_GPIO_ADDRESS, 0b0101);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -733,18 +718,14 @@ static inline void rvx_gpio_write_all(RvxGpio *gpio_address, const uint32_t valu
  *
  * Example usage:
  * ```c
- * // This example assumes the GPIO peripheral provides 4 pins and
- * // is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
  * // Configure pin directions.
  * // Pin 0 = input, pin 1 = output, pin 2 = output, pin 3 = output
- * rvx_gpio_configure_all(gpio_address, 0b1110);
+ * rvx_gpio_configure_all(RVX_GPIO_ADDRESS, 0b1110);
  *
  * // Set pins 1 and 2 to logic 0 simultaneously.
  * // Pin 0 output latch is cleared to 0, but the pin state is not affected.
  * // Pin 3 remains unchanged.
- * rvx_gpio_multi_pin_clear(gpio_address, 0b0111);
+ * rvx_gpio_multi_pin_clear(RVX_GPIO_ADDRESS, 0b0111);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -768,18 +749,14 @@ static inline void rvx_gpio_multi_pin_clear(RvxGpio *gpio_address, const uint32_
  *
  * Example usage:
  * ```c
- * // This example assumes the GPIO peripheral provides 4 pins and
- * // is mapped at address 0x80002000.
- * RvxGpio *gpio_address = (RvxGpio *)0x80002000;
- *
  * // Configure pin directions.
  * // Pin 0 = input, pin 1 = output, pin 2 = output, pin 3 = output
- * rvx_gpio_configure_all(gpio_address, 0b1110);
+ * rvx_gpio_configure_all(RVX_GPIO_ADDRESS, 0b1110);
  *
  * // Set pins 1 and 2 to logic 1 simultaneously.
  * // Pin 0 output latch is set to 1, but the pin state is not affected.
  * // Pin 3 remains unchanged.
- * rvx_gpio_multi_pin_set(gpio_address, 0b0111);
+ * rvx_gpio_multi_pin_set(RVX_GPIO_ADDRESS, 0b0111);
  * ```
  *
  * @param gpio_address Pointer to the base address of the GPIO peripheral.
@@ -1082,15 +1059,12 @@ static inline bool rvx_uart_tx_ready(RvxUart *uart_address)
  *
  * Example usage:
  *
- * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
+ * ```c *
  * // Send data
- * rvx_uart_write(uart_address, 'A');
+ * rvx_uart_write(RVX_UART_ADDRESS, 'A');
  *
  * // Busy-wait until transmission above is complete
- * rvx_uart_wait_tx_complete(uart_address);
+ * rvx_uart_wait_tx_complete(RVX_UART_ADDRESS);
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1109,14 +1083,11 @@ static inline void rvx_uart_wait_tx_complete(RvxUart *uart_address)
  * Example usage:
  *
  * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
  * // Wait for data to be received (busy-wait)
- * while (!rvx_uart_rx_ready(uart_address));
+ * while (!rvx_uart_rx_ready(RVX_UART_ADDRESS));
  *
  * // Read the received byte
- * uint8_t rx_data = rvx_uart_read(uart_address);
+ * uint8_t rx_data = rvx_uart_read(RVX_UART_ADDRESS);
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1137,14 +1108,11 @@ static inline bool rvx_uart_rx_ready(RvxUart *uart_address)
  *
  * Example usage:
  * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
  * // Wait for data to be received (busy-wait)
- * while (!rvx_uart_rx_ready(uart_address));
+ * while (!rvx_uart_rx_ready(RVX_UART_ADDRESS));
  *
  * // Read the received byte
- * uint8_t rx_data = rvx_uart_read(uart_address);
+ * uint8_t rx_data = rvx_uart_read(RVX_UART_ADDRESS);
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1165,14 +1133,11 @@ static inline uint8_t rvx_uart_read(RvxUart *uart_address)
  * Example usage:
  *
  * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
  * // Send 'A' over UART
- * rvx_uart_write(uart_address, 'A');
+ * rvx_uart_write(RVX_UART_ADDRESS, 'A');
  *
  * // Send 'B', busy-waits until 'A' has been fully transmitted
- * rvx_uart_write(uart_address, 'B');
+ * rvx_uart_write(RVX_UART_ADDRESS, 'B');
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1192,11 +1157,8 @@ static inline void rvx_uart_write(RvxUart *uart_address, uint8_t data)
  *
  * Example usage:
  * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
  * // Send the string "Hello, World!" over UART, waiting if necessary
- * rvx_uart_write_string(uart_address, "Hello, World!");
+ * rvx_uart_write_string(RVX_UART_ADDRESS, "Hello, World!");
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
@@ -1233,11 +1195,8 @@ static inline void rvx_uart_write_string(RvxUart *uart_address, const char *c_st
  * Example usage:
  *
  * ```c
- * // Assume UART is mapped at address 0x80000000
- * RvxUart *uart_address = (RvxUart *)0x80000000;
- *
  * // Initialize UART for 115200 baud with a 50 MHz clock
- * rvx_uart_init(uart_address, 50000000 / 115200);
+ * rvx_uart_init(RVX_UART_ADDRESS, 50000000 / 115200);
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
