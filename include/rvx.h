@@ -41,7 +41,7 @@
 #define RVX_ALIGNED __attribute__((aligned(4)))
 
 /// Define a M-mode interrupt handler function.
-#define RVX_IRQ_HANDLER_M(vector) __attribute__((interrupt("machine"))) void vector(void)
+#define RVX_TRAP_HANDLER_M(vector) __attribute__((interrupt("machine"))) void vector(void)
 
 /// Set the specified bits in a Memory-Mapped IO register given a bitmask.
 #define RVX_SET_MASK(register, bitmask) ((register) |= (bitmask))
