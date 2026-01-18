@@ -2,7 +2,7 @@
 /* Copyright (c) 2020-2026 RVX Project Contributors */
 
 OUTPUT_ARCH("riscv")
-ENTRY(rvx_boot)
+ENTRY(rvx_startup)
 
 MEMORY
 {
@@ -23,7 +23,7 @@ SECTIONS
 
   .text :
   {
-    *(.init.rvx_boot)
+    *(.init.rvx_startup)
     *(.init.rvx_trap_vector)
     *(.text.rvx_return_from_trap)
     *(.text.default_trap_handler)
