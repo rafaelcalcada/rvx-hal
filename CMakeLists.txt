@@ -98,7 +98,7 @@ if(DEFINED RVX_BARE_METAL)
 endif()
 
 # Provide startup file to be compiled by consuming targets
-target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/startup/startup_rvx.S)
+target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/source/rvx_startup.S)
 
 # Function to attach memory file generation to a target
 function(rvx_generate_memory_init_file TARGET_NAME)
