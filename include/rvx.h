@@ -141,7 +141,8 @@ typedef enum RvxTrapCauseCode
 
   // Interrupt codes (MSB set)
   RVX_TRAP_CAUSE_MSI = (int)((1U << 31) | 3U),      ///< Trap cause: M-mode Software Interrupt (MSI).
-  RVX_TRAP_CAUSE_MTI = (int)((1U << 31) | 11U),     ///< Trap cause: M-mode External Interrupt (MEI).
+  RVX_TRAP_CAUSE_MEI = (int)((1U << 31) | 7U),      ///< Trap cause: M-mode External Interrupt (MEI).
+  RVX_TRAP_CAUSE_MTI = (int)((1U << 31) | 11U),     ///< Trap cause: M-mode Timer Interrupt (MTI).
   RVX_TRAP_CAUSE_FAST_0 = (int)((1U << 31) | 16U),  ///< Trap cause: Fast-Interrupt 0
   RVX_TRAP_CAUSE_FAST_1 = (int)((1U << 31) | 17U),  ///< Trap cause: Fast-Interrupt 1
   RVX_TRAP_CAUSE_FAST_2 = (int)((1U << 31) | 18U),  ///< Trap cause: Fast-Interrupt 2
