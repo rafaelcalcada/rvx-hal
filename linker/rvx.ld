@@ -25,9 +25,7 @@ SECTIONS
   {
     *(.init.rvx_startup)
     *(.init.rvx_trap_vector)
-    *(.text.rvx_return_from_trap)
-    *(.text.default_trap_handler)
-    *(.text.*_irq_handler)
+    *(.text.rvx_trap_handler_*)
     *(SORT_NONE(.init))
     *(SORT_NONE(.fini))
 
