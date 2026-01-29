@@ -1177,18 +1177,7 @@ static inline void rvx_uart_write_string(RvxUart *uart_address, const char *c_st
  * @brief Initialize the UART with a specified baud rate.
  *
  * This function configures the UART's baud rate by writing the number of clock cycles
- * per baud into the UART baud configuration register. The required value for
- * `cycles_per_baud` can be calculated using:
- *
- * ```
- * cycles_per_baud = f_clock / desired_baud_rate
- * ```
- *
- * For example, if the system clock is 50 MHz and the desired baud rate is 115200, then:
- *
- * ```
- * cycles_per_baud = 50000000 / 115200 ~= 434
- * ```
+ * per baud into the UART baud configuration register.
  *
  * After initialization, the UART will transmit and receive data at the configured
  * baud rate. This function does not modify any other UART settings.
@@ -1196,16 +1185,17 @@ static inline void rvx_uart_write_string(RvxUart *uart_address, const char *c_st
  * Example usage:
  *
  * ```c
- * // Initialize UART for 115200 baud with a 50 MHz clock
- * rvx_uart_init(RVX_UART_ADDRESS, 50000000 / 115200);
+ * // Initialize UART at 115200 bauds per second (RVX clock is 50MHz)
+ * rvx_uart_init(RVX_UART_ADDRESS, 115200, 50000000);
  * ```
  *
  * @param uart_address Pointer to the base address of the UART peripheral.
- * @param cycles_per_baud Number of clock cycles per baud (`f_clock / desired_baud_rate`).
+ * @param baud_rate The desired baud rate
+ * @param clock_frequency_in_hz The frequency of RVX top module clock pin, in Hz
  */
-static inline void rvx_uart_init(RvxUart *uart_address, uint32_t cycles_per_baud)
+static inline void rvx_uart_init(RvxUart *uart_address, uint32_t baud_rate, uint32_t clock_frequency_in_hz)
 {
-  uart_address->RVX_UART_BAUD_REG = cycles_per_baud;
+  uart_address->RVX_UART_BAUD_REG = clock_frequency_in_hz / baud_rate;
 }
 
 #endif // RVX_HAL_H
