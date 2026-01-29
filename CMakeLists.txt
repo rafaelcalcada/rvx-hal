@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 
 # Architecture
 if(NOT DEFINED RVX_ARCH)
-  if (DEFINED RVX_ENABLE_ZMMUL)
+  if(DEFINED RVX_ENABLE_ZMMUL)
     set(RVX_ARCH "rv32i_zicsr_zmmul" CACHE STRING "RISC-V architecture to target")
     message(STATUS "Selected RISC-V architecture for RVX: ${RVX_ARCH}")
   else()
@@ -20,6 +20,7 @@ if(NOT CMAKE_C_COMPILER)
     set(RISCV_TOOLCHAIN_PREFIX "riscv32-unknown-elf-" CACHE STRING "Toolchain prefix for RISC-V cross compiler")
     message(STATUS "Using default RISCV_TOOLCHAIN_PREFIX: ${RISCV_TOOLCHAIN_PREFIX}")
   endif()
+
   set(CMAKE_C_COMPILER "${RISCV_TOOLCHAIN_PREFIX}gcc" CACHE FILEPATH "C compiler")
   set(CMAKE_ASM_COMPILER "${RISCV_TOOLCHAIN_PREFIX}gcc" CACHE FILEPATH "ASM compiler")
   set(CMAKE_OBJCOPY "${RISCV_TOOLCHAIN_PREFIX}objcopy" CACHE FILEPATH "objcopy tool")
@@ -43,14 +44,14 @@ endif()
 
 # Stack Size
 if(NOT DEFINED RVX_STACK_SIZE)
-    set(RVX_STACK_SIZE "1024" CACHE STRING "Stack size in bytes")
-    message(STATUS "Using default RVX_STACK_SIZE: ${RVX_STACK_SIZE} bytes")
+  set(RVX_STACK_SIZE "1024" CACHE STRING "Stack size in bytes")
+  message(STATUS "Using default RVX_STACK_SIZE: ${RVX_STACK_SIZE} bytes")
 endif()
 
 # Heap Size
 if(NOT DEFINED RVX_HEAP_SIZE)
-    set(RVX_HEAP_SIZE "0" CACHE STRING "Heap size in bytes")
-    message(STATUS "Using default RVX_HEAP_SIZE: ${RVX_HEAP_SIZE} bytes")
+  set(RVX_HEAP_SIZE "0" CACHE STRING "Heap size in bytes")
+  message(STATUS "Using default RVX_HEAP_SIZE: ${RVX_HEAP_SIZE} bytes")
 endif()
 
 # Define INTERFACE library
@@ -59,37 +60,37 @@ add_library(rvx_hal INTERFACE)
 # Include directories
 target_include_directories(rvx_hal
   INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
 # Compiler options
 target_compile_options(rvx_hal
   INTERFACE
-    -Wall
-    -Wextra
-    -Wpedantic
-    -mstrict-align
-    -ffreestanding
-    -fno-builtin
-    -ffunction-sections
-    -fdata-sections
-    -march=${RVX_ARCH}
-    -mabi=ilp32
-    -mno-relax
+  -Wall
+  -Wextra
+  -Wpedantic
+  -mstrict-align
+  -ffreestanding
+  -fno-builtin
+  -ffunction-sections
+  -fdata-sections
+  -march=${RVX_ARCH}
+  -mabi=ilp32
+  -mno-relax
 )
 
 # Linker options
 target_link_options(rvx_hal
   INTERFACE
-    -T${CMAKE_CURRENT_LIST_DIR}/linker/rvx.ld
-    -Wl,--gc-sections
-    -mstrict-align
-    -march=${RVX_ARCH}
-    -mabi=ilp32
-    -Wl,--defsym=__memory_size=${RVX_MEMORY_SIZE}
-    -Wl,--defsym=__stack_size=${RVX_STACK_SIZE}
-    -Wl,--defsym=__heap_size=${RVX_HEAP_SIZE}
-    $<$<BOOL:${RVX_BARE_METAL}>:-nostartfiles>
+  -T${CMAKE_CURRENT_LIST_DIR}/linker/rvx.ld
+  -Wl,--gc-sections
+  -mstrict-align
+  -march=${RVX_ARCH}
+  -mabi=ilp32
+  -Wl,--defsym=__memory_size=${RVX_MEMORY_SIZE}
+  -Wl,--defsym=__stack_size=${RVX_STACK_SIZE}
+  -Wl,--defsym=__heap_size=${RVX_HEAP_SIZE}
+  $<$<BOOL:${RVX_BARE_METAL}>:-nostartfiles>
 )
 
 # Add compile definition if RVX_BARE_METAL is defined
@@ -124,7 +125,6 @@ function(rvx_generate_memory_init_file TARGET_NAME)
     # Run size tool
     COMMAND ${TOOLCHAIN_PREFIX}size -G $<TARGET_FILE:${TARGET_NAME}>
     COMMAND ${CMAKE_COMMAND} -E echo ""
-
   )
 
   # Add generated files to clean
@@ -133,6 +133,5 @@ function(rvx_generate_memory_init_file TARGET_NAME)
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm
-
   )
 endfunction()
