@@ -105,9 +105,6 @@ target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/source/rvx_startup.S)
 function(rvx_generate_memory_init_file TARGET_NAME)
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 
-    # Generate binary
-    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${TARGET_NAME}> $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf
-
     # Generate Verilog memory init file
     COMMAND ${CMAKE_OBJCOPY} -O verilog --verilog-data-width=4 $<TARGET_FILE:${TARGET_NAME}> $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem
 
@@ -117,7 +114,7 @@ function(rvx_generate_memory_init_file TARGET_NAME)
     # Print info
     COMMAND ${CMAKE_COMMAND} -E echo ""
     COMMAND ${CMAKE_COMMAND} -E echo "Memory init file:   $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem"
-    COMMAND ${CMAKE_COMMAND} -E echo "ELF binary:         $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf"
+    COMMAND ${CMAKE_COMMAND} -E echo "ELF binary:         $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}"
     COMMAND ${CMAKE_COMMAND} -E echo "Disassembly:        $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm"
     COMMAND ${CMAKE_COMMAND} -E echo ""
     COMMAND ${CMAKE_COMMAND} -E echo "Memory usage report \\(total memory size: ${RVX_MEMORY_SIZE} bytes\\)"
@@ -130,7 +127,7 @@ function(rvx_generate_memory_init_file TARGET_NAME)
   # Add generated files to clean
   set_property(TARGET ${TARGET_NAME} APPEND PROPERTY ADDITIONAL_CLEAN_FILES
 
-    $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf
+    $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm
   )
