@@ -19,7 +19,7 @@ SECTIONS
   .boot_header :
   {
     LONG(0x52563332);               /* Magic number: "RV32" (0x52563332) */
-    LONG(__program_size);           /* Program size in bytes */
+    LONG(__boot_image_size);        /* Boot image size in bytes */
     LONG(rvx_startup);              /* Entry point address */
     LONG(0x52565834)                /* Magic number: "RVX4" */
   }
@@ -93,7 +93,7 @@ PROVIDE( __stack_top                = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM));
 PROVIDE( _end = ALIGN(ADDR(.bss) + SIZEOF(.bss), 8));
 PROVIDE( end  = _end);
 
-PROVIDE( __program_size = _end - ORIGIN(RVX_TCM) + SIZEOF(.boot_header));
+PROVIDE( __boot_image_size = SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.boot_header));
 
 PROVIDE( __heap_start = _end);
 PROVIDE( __heap_end   = __heap_start + __heap_size);
