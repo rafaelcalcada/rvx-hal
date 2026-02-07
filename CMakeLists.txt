@@ -91,6 +91,7 @@ target_link_options(rvx_hal
   -Wl,--defsym=__stack_size=${RVX_STACK_SIZE}
   -Wl,--defsym=__heap_size=${RVX_HEAP_SIZE}
   $<$<BOOL:${RVX_BARE_METAL}>:-nostartfiles>
+  -Wl,--no-warn-rwx-segments
 )
 
 # Add compile definition if RVX_BARE_METAL is defined
@@ -101,34 +102,44 @@ endif()
 # Provide startup file to be compiled by consuming targets
 target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/source/rvx_startup.S)
 
-# Function to attach memory file generation to a target
-function(rvx_generate_memory_init_file TARGET_NAME)
+# Function to attach boot image generation to a target
+function(rvx_generate_boot_image TARGET_NAME)
+
+  # Compute relative path from source dir to binary dir
+  file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 
-    # Generate Verilog memory init file
+    # Generate boot image for FPGA Bitstream (Verilog format)
     COMMAND ${CMAKE_OBJCOPY} -O verilog --verilog-data-width=4 $<TARGET_FILE:${TARGET_NAME}> $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem
+
+    # Generate boot image for SPI Flash Memory (raw binary format)
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${TARGET_NAME}> $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.bin
 
     # Generate disassembly
     COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${TARGET_NAME}> > $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm
 
+    # Rename ELF binary to .elf extension
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${TARGET_NAME}> $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf
+
     # Print info
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "Memory init file:   $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem"
-    COMMAND ${CMAKE_COMMAND} -E echo "ELF binary:         $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}"
-    COMMAND ${CMAKE_COMMAND} -E echo "Disassembly:        $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm"
+    COMMAND ${CMAKE_COMMAND} -E echo "Generated files:"
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "Memory usage report \\(total memory size: ${RVX_MEMORY_SIZE} bytes\\)"
-
-    # Run size tool
-    COMMAND ${TOOLCHAIN_PREFIX}size -G $<TARGET_FILE:${TARGET_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E echo "Boot image \\(for SPI Flash Memory\\): ${rel_path}/${TARGET_NAME}.bin"
+    COMMAND ${CMAKE_COMMAND} -E echo "Boot image \\(for FPGA Bitstream\\):   ${rel_path}/${TARGET_NAME}.mem"
+    COMMAND ${CMAKE_COMMAND} -E echo "ELF binary:                        ${rel_path}/${TARGET_NAME}.elf"
+    COMMAND ${CMAKE_COMMAND} -E echo "Disassembly:                       ${rel_path}/${TARGET_NAME}.disasm"
     COMMAND ${CMAKE_COMMAND} -E echo ""
   )
 
   # Add generated files to clean
   set_property(TARGET ${TARGET_NAME} APPEND PROPERTY ADDITIONAL_CLEAN_FILES
 
-    $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}
+    $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.bin
+    $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.elf
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.mem
     $<TARGET_FILE_DIR:${TARGET_NAME}>/${TARGET_NAME}.disasm
+
   )
 endfunction()

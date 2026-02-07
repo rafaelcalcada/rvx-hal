@@ -6,13 +6,7 @@ ENTRY(rvx_startup)
 
 MEMORY
 {
-  RVX_TCM (wx)  : ORIGIN = 0x00000000, LENGTH = __memory_size
-}
-
-PHDRS
-{
-  text PT_LOAD FLAGS(5); /* (Read, execute) */
-  data PT_LOAD FLAGS(6); /* (Read, write)   */
+  RVX_TCM (wx)   : ORIGIN = 0x00001010, LENGTH = __memory_size
 }
 
 SECTIONS
@@ -21,7 +15,16 @@ SECTIONS
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0;
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0;
 
-  .text :
+  /* Header for Flash SPI Boot Image */
+  .boot_header :
+  {
+    LONG(0x52563332);               /* Magic number: "RV32" (0x52563332) */
+    LONG(__program_size);           /* Program size in bytes */
+    LONG(rvx_startup);              /* Entry point address */
+    LONG(0x52565834)                /* Magic number: "RVX4" */
+  }
+
+  .text : AT(SIZEOF(.boot_header))
   {
     *(.init.rvx_startup)
     *(.init.rvx_trap_vector)
@@ -49,9 +52,9 @@ SECTIONS
 
     . = ALIGN(4);
     *(.srodata*)
-  } > RVX_TCM :text
+  } > RVX_TCM
 
-  .data : ALIGN(4)
+  .data : AT(SIZEOF(.boot_header) + SIZEOF(.text)) ALIGN(4)
   {
     *(.data*)
     *(.gnu.linkonce.d.*)
@@ -62,7 +65,7 @@ SECTIONS
     *(.sdata*)
     *(.gnu.linkonce.s.*)
     __sdata_end = .;
-  } > RVX_TCM :data
+  } > RVX_TCM
 
   .bss (NOLOAD) : ALIGN(4)
   {
@@ -89,6 +92,8 @@ PROVIDE( __stack_top                = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM));
 
 PROVIDE( _end = ALIGN(ADDR(.bss) + SIZEOF(.bss), 8));
 PROVIDE( end  = _end);
+
+PROVIDE( __program_size = _end - ORIGIN(RVX_TCM) + SIZEOF(.boot_header));
 
 PROVIDE( __heap_start = _end);
 PROVIDE( __heap_end   = __heap_start + __heap_size);
