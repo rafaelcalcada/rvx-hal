@@ -82,7 +82,8 @@ target_compile_options(rvx_hal
 # Linker options
 target_link_options(rvx_hal
   INTERFACE
-  -T${CMAKE_CURRENT_LIST_DIR}/linker/rvx.ld
+  $<$<BOOL:${RVX_BOOTLOADER}>:-T${CMAKE_CURRENT_LIST_DIR}/linker/bootloader.ld>
+  $<$<NOT:$<BOOL:${RVX_BOOTLOADER}>>:-T${CMAKE_CURRENT_LIST_DIR}/linker/rvx.ld>
   -Wl,--gc-sections
   -mstrict-align
   -march=${RVX_ARCH}
