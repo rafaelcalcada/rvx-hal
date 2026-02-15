@@ -6,7 +6,7 @@ ENTRY(rvx_startup)
 
 MEMORY
 {
-  RVX_TCM (wx)   : ORIGIN = 0x00001010, LENGTH = __memory_size
+  RVX_TCM (wx)   : ORIGIN = 0x00001000, LENGTH = __memory_size
 }
 
 SECTIONS
@@ -15,14 +15,13 @@ SECTIONS
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0;
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0;
 
-  /* Header for Flash SPI Boot Image */
-  .boot_header :
+  .boot_header : AT(0) ALIGN(4)
   {
     LONG(0x52563332);               /* Magic number: "RV32" (0x52563332) */
     LONG(__boot_image_size);        /* Boot image size in bytes */
     LONG(rvx_startup);              /* Entry point address */
     LONG(0x52565834)                /* Magic number: "RVX4" */
-  }
+  } > RVX_TCM
 
   .text : AT(SIZEOF(.boot_header))
   {

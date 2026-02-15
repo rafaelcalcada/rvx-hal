@@ -100,8 +100,10 @@ if(DEFINED RVX_BARE_METAL)
   target_compile_definitions(rvx_hal INTERFACE RVX_BARE_METAL)
 endif()
 
-# Provide startup file to be compiled by consuming targets
-target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/source/rvx_startup.S)
+# Provide startup file to be compiled by consuming targets (except for bootloader)
+if (NOT DEFINED RVX_BOOTLOADER OR NOT RVX_BOOTLOADER)
+  target_sources(rvx_hal INTERFACE ${CMAKE_CURRENT_LIST_DIR}/source/rvx_startup.S)
+endif()
 
 # Function to attach boot image generation to a target
 function(rvx_generate_boot_image TARGET_NAME)
