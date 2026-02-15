@@ -6,11 +6,19 @@ ENTRY(rvx_startup)
 
 MEMORY
 {
-  RVX_TCM (wx)   : ORIGIN = 0x00001000, LENGTH = __memory_size
+  BOOTLOADER (rx) : ORIGIN = 0x00000000, LENGTH = 4K
+  RVX_TCM (wx)    : ORIGIN = 0x00001000, LENGTH = __memory_size
 }
 
 SECTIONS
 {
+
+  /* Bootloader symbol for GDB debugging - NOLOAD to avoid LMA conflicts */
+  .rvx_bootloader 0x00000000 (NOLOAD) :
+  {
+    KEEP(*(.rvx_bootloader))
+    . = 0x1000;
+  }
 
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0;
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0;

@@ -108,3 +108,15 @@ rvx_trap_handler_default:
 .set rvx_trap_handler_fast13, rvx_trap_handler_default
 .set rvx_trap_handler_fast14, rvx_trap_handler_default
 .set rvx_trap_handler_fast15, rvx_trap_handler_default
+
+// Bootloader symbol for GDB debugging
+// Any address from 0x00000000 to 0x00000FFF will be shown
+// in GDB as 'rvx_bootloader'.
+
+.section .rvx_bootloader, "a"
+.globl rvx_bootloader
+.type rvx_bootloader, @object
+.size rvx_bootloader, 0x1000
+
+rvx_bootloader:
+    .byte 0
