@@ -2,7 +2,7 @@
 /* Copyright (c) 2020-2026 RVX Project Contributors */
 
 OUTPUT_ARCH("riscv")
-ENTRY(rvx_startup)
+ENTRY(rvx_bootloader)
 
 MEMORY
 {
