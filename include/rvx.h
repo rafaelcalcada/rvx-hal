@@ -198,7 +198,7 @@ typedef struct RVX_ALIGNED RvxSpiManager
   volatile uint32_t RVX_SPI_STATUS;      ///< RVX SPI Status Register.
 } RvxSpiManager;
 
-// Provide access to RVX Timer registers.
+/// Provide access to RVX Timer registers.
 typedef struct RVX_ALIGNED RvxTimer
 {
   volatile uint32_t RVX_TIMER_COUNTER_ENABLE; ///< RVX Timer Counter Enable Register.
