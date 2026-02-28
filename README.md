@@ -2,7 +2,7 @@
 
 ## RVX HAL
 
-RVX HAL is the Hardware Abstraction Layer for [RVX](https://github.com/rafaelcalcada/rvx), designed to make developing software for RVX fast, easy, and maintainable. It provides drivers for SPI, GPIO, UART, and simple access to processor registers — so you can focus on your application rather than low-level hardware details. The drivers provide a simple, straightforward API that is easy to use.
+RVX HAL is the Hardware Abstraction Layer for [RVX](https://github.com/rafaelcalcada/rvx), designed to make developing software for RVX fast, easy, and maintainable. It provides drivers for SPI, GPIO, UART, and simple access to processor registers — so you can focus on your application rather than low-level hardware details.
 
 Built with CMake and the RISC-V GNU Toolchain, RVX HAL sets up compiler flags and automatically compiles and links your code with RVX startup routines. Its lightweight design makes integration simple — just fetch it from your CMake project settings and start coding.
 
