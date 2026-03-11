@@ -12,19 +12,19 @@
 #include <stddef.h>  // for size_t
 #include <stdint.h>  // for uint32_t, uint16_t, uint8_t types
 
-/// Default base address of the RVX UART peripheral.
+/// Default base address of RVX UART controller.
 #define RVX_UART_ADDRESS (RvxUart *)0x40000000U
 
-/// Default base address of the RVX Timer peripheral.
+/// Default base address of RVX Timer controller.
 #define RVX_TIMER_ADDRESS (RvxTimer *)0x40001000U
 
-/// Default base address of the RVX GPIO peripheral.
+/// Default base address of RVX GPIO controller.
 #define RVX_GPIO_ADDRESS (RvxGpio *)0x40002000U
 
-/// Default base address of the RVX SPI Manager peripheral.
-#define RVX_SPI_MANAGER_ADDRESS (RvxSpiManager *)0x40003000U
+/// Default base address of RVX SPI controller.
+#define RVX_SPI_ADDRESS (RvxSpi *)0x40003000U
 
-/// Default base address of the RVX I2C peripheral.
+/// Default base address of RVX I2C controller.
 #define RVX_I2C_ADDRESS (RvxI2c *)0x40004000U
 
 /// Mark a function or variable as weak, allowing it to be overridden by other definitions.
@@ -197,7 +197,7 @@ typedef enum RvxSpiMode
   RVX_SPI_MODE_3 = 3  ///< SPI Mode 3 (CPOL 1 / CPHA 1).
 } RvxSpiMode;
 
-/// Provide access to I2C registers.
+/// Provide access to the I2C controller registers.
 typedef struct RVX_ALIGNED RvxI2c
 {
   volatile uint32_t RVX_I2C_PRESCALE_REG; ///< RVX I2C Prescale Register.
@@ -206,7 +206,7 @@ typedef struct RVX_ALIGNED RvxI2c
   volatile uint32_t RVX_I2C_STATUS_REG;   ///< RVX I2C Status Register.
 } RvxI2c;
 
-/// Provide access to GPIO registers.
+/// Provide access to the GPIO controller registers.
 typedef struct RVX_ALIGNED RvxGpio
 {
   volatile uint32_t RVX_GPIO_READ_REG;          ///< RVX GPIO Read Register.
@@ -216,8 +216,8 @@ typedef struct RVX_ALIGNED RvxGpio
   volatile uint32_t RVX_GPIO_SET_REG;           ///< RVX GPIO Set Register.
 } RvxGpio;
 
-/// Provide access to SPI Manager registers.
-typedef struct RVX_ALIGNED RvxSpiManager
+/// Provide access to the SPI controller registers.
+typedef struct RVX_ALIGNED RvxSpi
 {
   volatile uint32_t RVX_SPI_MODE;        ///< RVX SPI Mode Register.
   volatile uint32_t RVX_SPI_CHIP_SELECT; ///< RVX SPI Chip Select register.
@@ -225,9 +225,9 @@ typedef struct RVX_ALIGNED RvxSpiManager
   volatile uint32_t RVX_SPI_WRITE;       ///< RVX SPI Write Register.
   volatile uint32_t RVX_SPI_READ;        ///< RVX SPI Read Register.
   volatile uint32_t RVX_SPI_STATUS;      ///< RVX SPI Status Register.
-} RvxSpiManager;
+} RvxSpi;
 
-/// Provide access to RVX Timer registers.
+/// Provide access to the Timer module registers.
 typedef struct RVX_ALIGNED RvxTimer
 {
   volatile uint32_t RVX_TIMER_COUNTER_ENABLE; ///< RVX Timer Counter Enable Register.
@@ -237,7 +237,7 @@ typedef struct RVX_ALIGNED RvxTimer
   volatile uint32_t RVX_TIMER_COMPAREH;       ///< Upper 32-bits of the RVX Timer Compare Register.
 } RvxTimer;
 
-/// Provide access to UART registers.
+/// Provide access to the UART controller registers.
 typedef struct RVX_ALIGNED RvxUart
 {
   volatile uint32_t RVX_UART_WRITE_REG;  ///< RVX UART Write Register.
@@ -1007,7 +1007,7 @@ static inline bool rvx_i2c_reade_from(RvxI2c *i2c_address, const uint8_t slave_a
 }
 
 /**
- * @brief Configure the SPI Manager to operate on a given mode.
+ * @brief Configure the SPI controller to operate on a given mode.
  *
  * The four possible modes are:
  *
@@ -1019,49 +1019,49 @@ static inline bool rvx_i2c_reade_from(RvxI2c *i2c_address, const uint8_t slave_a
  *
  *   - RVX_SPI_MODE_3 (CPOL 1, CPHA 1).
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  * @param mode Desired mode as `RvxSpiMode`.
  */
-static inline void rvx_spi_mode_set(RvxSpiManager *spi_address, RvxSpiMode mode)
+static inline void rvx_spi_mode_set(RvxSpi *spi_address, RvxSpiMode mode)
 {
   spi_address->RVX_SPI_MODE = mode;
 }
 
 /**
- * @brief Read the current SPI Manager mode.
+ * @brief Read the current SPI controller mode.
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
- * @return The SPI Manager mode as `RvxSpiMode`.
+ * @param spi_address Pointer to the base address of the SPI controller.
+ * @return The SPI controller mode as `RvxSpiMode`.
  */
-static inline RvxSpiMode rvx_spi_mode_get(RvxSpiManager *spi_address)
+static inline RvxSpiMode rvx_spi_mode_get(RvxSpi *spi_address)
 {
   return (RvxSpiMode)spi_address->RVX_SPI_MODE;
 }
 
 /**
- * @brief Assert the Chip Select (CS) line controlled by the SPI Manager.
+ * @brief Assert the Chip Select (CS) line controlled by the SPI controller.
  *
- * The SPI Manager hardware provides only one Chip Select output under its control.
+ * The SPI controller hardware provides only one Chip Select output under its control.
  * To communicate with multiple SPI devices on the same bus, use additional GPIO pins
  * as software-controlled CS lines.
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  */
-static inline void rvx_spi_chip_select_assert(RvxSpiManager *spi_address)
+static inline void rvx_spi_chip_select_assert(RvxSpi *spi_address)
 {
   spi_address->RVX_SPI_CHIP_SELECT = 0;
 }
 
 /**
- * @brief Deassert the Chip Select (CS) line controlled by the SPI Manager.
+ * @brief Deassert the Chip Select (CS) line controlled by the SPI controller.
  *
- * The SPI Manager hardware provides only one Chip Select output under its control.
+ * The SPI controller hardware provides only one Chip Select output under its control.
  * To communicate with multiple SPI devices on the same bus, use additional GPIO pins
  * as software-controlled CS lines.
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  */
-static inline void rvx_spi_chip_select_deassert(RvxSpiManager *spi_address)
+static inline void rvx_spi_chip_select_deassert(RvxSpi *spi_address)
 {
   spi_address->RVX_SPI_CHIP_SELECT = 1;
 }
@@ -1086,10 +1086,10 @@ static inline void rvx_spi_chip_select_deassert(RvxSpiManager *spi_address)
  *
  * - `divider = 255` → slowest clock: `f_SCLK = f_clock / 512`
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  * @param divider Clock divider value (0–255) that determines the SCLK output frequency.
  */
-static inline void rvx_spi_clock_set_divider(RvxSpiManager *spi_address, const uint8_t divider)
+static inline void rvx_spi_clock_set_divider(RvxSpi *spi_address, const uint8_t divider)
 {
   spi_address->RVX_SPI_DIVIDER = divider;
 }
@@ -1097,15 +1097,15 @@ static inline void rvx_spi_clock_set_divider(RvxSpiManager *spi_address, const u
 /**
  * @brief Return the current `divider` value configured for the SCLK (SPI clock) frequency.
  *
- * This function reads the `divider` setting in the SPI Manager, which determines the frequency
+ * This function reads the `divider` setting in the SPI controller, which determines the frequency
  * of the SCLK output pin according to the formula:
  *
  *     `f_SCLK = f_clock / [2 * (divider + 1)]`
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  * @return The current divider configuration value.
  */
-static inline uint8_t rvx_spi_clock_get_divider(RvxSpiManager *spi_address)
+static inline uint8_t rvx_spi_clock_get_divider(RvxSpi *spi_address)
 {
   return spi_address->RVX_SPI_DIVIDER;
 }
@@ -1116,10 +1116,10 @@ static inline uint8_t rvx_spi_clock_get_divider(RvxSpiManager *spi_address)
  * Sends a byte to the SPI device selected by the active CS line and blocks until the transfer
  * completes. The data received from the SPI peripheral during the transfer is ignored.
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  * @param wdata Byte to be transmitted.
  */
-static inline void rvx_spi_write(RvxSpiManager *spi_address, const uint8_t wdata)
+static inline void rvx_spi_write(RvxSpi *spi_address, const uint8_t wdata)
 {
   spi_address->RVX_SPI_WRITE = wdata;
   while (spi_address->RVX_SPI_STATUS & 1)
@@ -1132,11 +1132,11 @@ static inline void rvx_spi_write(RvxSpiManager *spi_address, const uint8_t wdata
  * Transmits a byte to the SPI peripheral selected by the active CS line and blocks until the
  * transfer completes. Returns the byte received from the SPI peripheral during the transfer.
  *
- * @param spi_address Pointer to the base address of the SPI Manager.
+ * @param spi_address Pointer to the base address of the SPI controller.
  * @param wdata Byte to be transmitted.
  * @return Byte received from the selected SPI Peripheral during the transfer.
  */
-static inline uint8_t rvx_spi_transfer(RvxSpiManager *spi_address, const uint8_t wdata)
+static inline uint8_t rvx_spi_transfer(RvxSpi *spi_address, const uint8_t wdata)
 {
   spi_address->RVX_SPI_WRITE = wdata;
   while (spi_address->RVX_SPI_STATUS & 1)
