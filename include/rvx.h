@@ -175,10 +175,10 @@ typedef enum RvxGpioPinDirection
 /// The I2C command.
 typedef enum RvxI2cCommand
 {
-  RVX_I2C_COMMAND_NOP = 0,   ///< I2C Command nop.
-  RVX_I2C_COMMAND_START = 1, ///< I2C Command start.
-  RVX_I2C_COMMAND_STOP = 2,  ///< I2C Command stop.
-  RVX_I2C_COMMAND_DATA = 3   ///< I2C Command data.
+  RVX_I2C_COMMAND_START = 0,   ///< I2C Command start.
+  RVX_I2C_COMMAND_RESTART = 1, ///< I2C Command restart.
+  RVX_I2C_COMMAND_STOP = 2,    ///< I2C Command stop.
+  RVX_I2C_COMMAND_DATA = 3     ///< I2C Command data.
 } RvxI2cCommand;
 
 /// @name Bit masks for I2C Status register.
@@ -904,6 +904,18 @@ static inline void rvx_i2c_clear_irq(RvxI2c *i2c_address)
 static inline void rvx_i2c_run_start(RvxI2c *i2c_address)
 {
   i2c_address->RVX_I2C_COMMAND_REG = RVX_I2C_COMMAND_START;
+  i2c_address->RVX_I2C_STATUS_REG = RVX_I2C_STATUS_RUN_BITMASK;
+  rvx_i2c_wait(i2c_address);
+}
+
+/**
+ * @brief Run encode restart condition on I2C interface.
+ *
+ * @param i2c_address Pointer to the base address of the I2C peripheral.
+ */
+static inline void rvx_i2c_run_restart(RvxI2c *i2c_address)
+{
+  i2c_address->RVX_I2C_COMMAND_REG = RVX_I2C_COMMAND_RESTART;
   i2c_address->RVX_I2C_STATUS_REG = RVX_I2C_STATUS_RUN_BITMASK;
   rvx_i2c_wait(i2c_address);
 }
