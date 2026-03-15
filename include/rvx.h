@@ -118,10 +118,10 @@
 
 /// @name Bit masks for MIE and MIP interrupt enable/pending bits.
 /// @{
-#define RVX_IRQ_MSI_BITMASK (1U << 3U)              ///< Bitmask for the MSI enable/pending bit.
-#define RVX_IRQ_MTI_BITMASK (1U << 7U)              ///< Bitmask for the MTI enable/pending bit.
-#define RVX_IRQ_MEI_BITMASK (1U << 11U)             ///< Bitmask for the MEI enable/pending bit.
-#define RVX_IRQ_FAST_BITMASK(n) (1U << (16U + (n))) ///< Bitmask for the Fast IRQ `n` enable/pending bit.
+#define RVX_IRQ_SOFTWARE_BITMASK (1U << 3U)         ///< Bitmask for the Machine Software Interrupt enable/pending bit.
+#define RVX_IRQ_TIMER_BITMASK (1U << 7U)            ///< Bitmask for the Machine Timer Interrupt enable/pending bit.
+#define RVX_IRQ_EXTERNAL_BITMASK (1U << 11U)        ///< Bitmask for the Machine External Interrupt enable/pending bit.
+#define RVX_IRQ_FAST_BITMASK(n) (1U << (16U + (n))) ///< Bitmask for the Fast Interrupt `n` enable/pending bit.
 /// @}
 
 /// @brief Standard RISC-V trap cause codes for the MCAUSE CSR.
@@ -144,25 +144,25 @@ typedef enum RvxTrapCauseCode
   RVX_TRAP_CAUSE_STORE_AMO_PAGE_FAULT = 15U,          ///< Trap cause: Store/AMO page fault.
 
   // Interrupt codes (MSB set)
-  RVX_TRAP_CAUSE_MSI = (int)((1U << 31) | 3U),      ///< Trap cause: M-mode Software Interrupt (MSI).
-  RVX_TRAP_CAUSE_MEI = (int)((1U << 31) | 7U),      ///< Trap cause: M-mode External Interrupt (MEI).
-  RVX_TRAP_CAUSE_MTI = (int)((1U << 31) | 11U),     ///< Trap cause: M-mode Timer Interrupt (MTI).
-  RVX_TRAP_CAUSE_FAST_0 = (int)((1U << 31) | 16U),  ///< Trap cause: Fast-Interrupt 0
-  RVX_TRAP_CAUSE_FAST_1 = (int)((1U << 31) | 17U),  ///< Trap cause: Fast-Interrupt 1
-  RVX_TRAP_CAUSE_FAST_2 = (int)((1U << 31) | 18U),  ///< Trap cause: Fast-Interrupt 2
-  RVX_TRAP_CAUSE_FAST_3 = (int)((1U << 31) | 19U),  ///< Trap cause: Fast-Interrupt 3
-  RVX_TRAP_CAUSE_FAST_4 = (int)((1U << 31) | 20U),  ///< Trap cause: Fast-Interrupt 4
-  RVX_TRAP_CAUSE_FAST_5 = (int)((1U << 31) | 21U),  ///< Trap cause: Fast-Interrupt 5
-  RVX_TRAP_CAUSE_FAST_6 = (int)((1U << 31) | 22U),  ///< Trap cause: Fast-Interrupt 6
-  RVX_TRAP_CAUSE_FAST_7 = (int)((1U << 31) | 23U),  ///< Trap cause: Fast-Interrupt 7
-  RVX_TRAP_CAUSE_FAST_8 = (int)((1U << 31) | 24U),  ///< Trap cause: Fast-Interrupt 8
-  RVX_TRAP_CAUSE_FAST_9 = (int)((1U << 31) | 25U),  ///< Trap cause: Fast-Interrupt 9
-  RVX_TRAP_CAUSE_FAST_10 = (int)((1U << 31) | 26U), ///< Trap cause: Fast-Interrupt 10
-  RVX_TRAP_CAUSE_FAST_11 = (int)((1U << 31) | 27U), ///< Trap cause: Fast-Interrupt 11
-  RVX_TRAP_CAUSE_FAST_12 = (int)((1U << 31) | 28U), ///< Trap cause: Fast-Interrupt 12
-  RVX_TRAP_CAUSE_FAST_13 = (int)((1U << 31) | 29U), ///< Trap cause: Fast-Interrupt 13
-  RVX_TRAP_CAUSE_FAST_14 = (int)((1U << 31) | 30U), ///< Trap cause: Fast-Interrupt 14
-  RVX_TRAP_CAUSE_FAST_15 = (int)((1U << 31) | 31U)  ///< Trap cause: Fast-Interrupt 15
+  RVX_TRAP_CAUSE_SOFTWARE_IRQ = (int)((1U << 31) | 3U), ///< Trap cause: M-mode Software Interrupt.
+  RVX_TRAP_CAUSE_EXTERNAL_IRQ = (int)((1U << 31) | 7U), ///< Trap cause: M-mode External Interrupt.
+  RVX_TRAP_CAUSE_TIMER_IRQ = (int)((1U << 31) | 11U),   ///< Trap cause: M-mode Timer Interrupt.
+  RVX_TRAP_CAUSE_FAST_IRQ_0 = (int)((1U << 31) | 16U),  ///< Trap cause: Fast-Interrupt 0
+  RVX_TRAP_CAUSE_FAST_IRQ_1 = (int)((1U << 31) | 17U),  ///< Trap cause: Fast-Interrupt 1
+  RVX_TRAP_CAUSE_FAST_IRQ_2 = (int)((1U << 31) | 18U),  ///< Trap cause: Fast-Interrupt 2
+  RVX_TRAP_CAUSE_FAST_IRQ_3 = (int)((1U << 31) | 19U),  ///< Trap cause: Fast-Interrupt 3
+  RVX_TRAP_CAUSE_FAST_IRQ_4 = (int)((1U << 31) | 20U),  ///< Trap cause: Fast-Interrupt 4
+  RVX_TRAP_CAUSE_FAST_IRQ_5 = (int)((1U << 31) | 21U),  ///< Trap cause: Fast-Interrupt 5
+  RVX_TRAP_CAUSE_FAST_IRQ_6 = (int)((1U << 31) | 22U),  ///< Trap cause: Fast-Interrupt 6
+  RVX_TRAP_CAUSE_FAST_IRQ_7 = (int)((1U << 31) | 23U),  ///< Trap cause: Fast-Interrupt 7
+  RVX_TRAP_CAUSE_FAST_IRQ_8 = (int)((1U << 31) | 24U),  ///< Trap cause: Fast-Interrupt 8
+  RVX_TRAP_CAUSE_FAST_IRQ_9 = (int)((1U << 31) | 25U),  ///< Trap cause: Fast-Interrupt 9
+  RVX_TRAP_CAUSE_FAST_IRQ_10 = (int)((1U << 31) | 26U), ///< Trap cause: Fast-Interrupt 10
+  RVX_TRAP_CAUSE_FAST_IRQ_11 = (int)((1U << 31) | 27U), ///< Trap cause: Fast-Interrupt 11
+  RVX_TRAP_CAUSE_FAST_IRQ_12 = (int)((1U << 31) | 28U), ///< Trap cause: Fast-Interrupt 12
+  RVX_TRAP_CAUSE_FAST_IRQ_13 = (int)((1U << 31) | 29U), ///< Trap cause: Fast-Interrupt 13
+  RVX_TRAP_CAUSE_FAST_IRQ_14 = (int)((1U << 31) | 30U), ///< Trap cause: Fast-Interrupt 14
+  RVX_TRAP_CAUSE_FAST_IRQ_15 = (int)((1U << 31) | 31U)  ///< Trap cause: Fast-Interrupt 15
 } RvxTrapCauseCode;
 
 /// The direction of a GPIO pin.
@@ -393,10 +393,10 @@ typedef struct RVX_ALIGNED RvxUart
  * Example usage:
  * ```c
  * // Enable Machine Timer and Machine External interrupts
- * rvx_irq_enable(RVX_IRQ_MTI_MASK | RVX_IRQ_MEI_MASK);
+ * rvx_irq_enable(RVX_IRQ_TIMER_BITMASK | RVX_IRQ_EXTERNAL_BITMASK);
  *
  * // Enable RVX Fast Interrupt 2
- * rvx_irq_enable(RVX_IRQ_FAST_MASK(2));
+ * rvx_irq_enable(RVX_IRQ_FAST_BITMASK(2));
  *
  * // Globally enable interrupts to make the above effective
  * rvx_irq_enable_global();
@@ -437,10 +437,10 @@ static inline void rvx_irq_enable_global(void)
  * Example usage:
  * ```c
  * // Disable Machine Timer and Machine External interrupts
- * rvx_irq_disable(RVX_IRQ_MTI_MASK | RVX_IRQ_MEI_MASK);
+ * rvx_irq_disable(RVX_IRQ_TIMER_BITMASK | RVX_IRQ_EXTERNAL_BITMASK);
  *
  * // Disable RVX Fast Interrupt 2
- * rvx_irq_disable(RVX_IRQ_FAST_MASK(2));
+ * rvx_irq_disable(RVX_IRQ_FAST_BITMASK(2));
  * ```
  *
  * @param bit_mask Bitmask of interrupts to disable in the MIE CSR.
