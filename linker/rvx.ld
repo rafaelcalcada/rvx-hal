@@ -100,7 +100,7 @@ PROVIDE( __stack_top                = ORIGIN(RVX_TCM) + LENGTH(RVX_TCM));
 PROVIDE( _end = ALIGN(ADDR(.bss) + SIZEOF(.bss), 8));
 PROVIDE( end  = _end);
 
-PROVIDE( __boot_image_size = SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.boot_header));
+PROVIDE( __boot_image_size = ADDR(.data) + SIZEOF(.data) - ORIGIN(RVX_TCM));
 
 PROVIDE( __heap_start = _end);
 PROVIDE( __heap_end   = __heap_start + __heap_size);
