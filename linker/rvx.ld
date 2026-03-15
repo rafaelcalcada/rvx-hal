@@ -23,7 +23,7 @@ SECTIONS
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0;
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0;
 
-  .boot_header : AT(0) ALIGN(4)
+  .boot_header : ALIGN(4)
   {
     LONG(0x52563332);               /* Magic number: "RV32" (0x52563332) */
     LONG(__boot_image_size);        /* Boot image size in bytes */
@@ -31,7 +31,7 @@ SECTIONS
     LONG(0x52565834)                /* Magic number: "RVX4" */
   } > RVX_TCM
 
-  .text : AT(SIZEOF(.boot_header))
+  .text :
   {
     *(.init.rvx_startup)
     *(.init.rvx_trap_vector)
@@ -61,7 +61,7 @@ SECTIONS
     *(.srodata*)
   } > RVX_TCM
 
-  .data : AT(SIZEOF(.boot_header) + SIZEOF(.text)) ALIGN(4)
+  .data : ALIGN(4)
   {
     *(.data*)
     *(.gnu.linkonce.d.*)
@@ -84,7 +84,7 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     PROVIDE(__bss_end = .);
-  } > RVX_TCM
+  }
 
   /DISCARD/ :
   {
